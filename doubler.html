@@ -1,0 +1,833 @@
+<head>
+  <script>
+
+    var CaliPlayersPicked = [];
+    var SlowPlayers = [];
+
+    var HoleConfig = {
+      2: [3],
+      3: [3],
+      4: [3, 18],
+      5: [3, 18],
+      6: [3, 14, 18],
+      7: [3, 14, 18],
+      8: [3, 14, 18, 6],
+      9: [3, 14, 18, 6],
+      10: [3, 14, 18, 6, 12],
+      11: [3, 14, 18, 6, 12],
+      12: [3, 14, 18, 6, 12, 8],
+      13: [3, 14, 18, 6, 12, 8],
+      14: [3, 14, 18, 6, 12, 8, 10],
+      15: [3, 14, 18, 6, 12, 8, 10],
+      16: [3, 14, 18, 6, 12, 8, 10, 16],
+      17: [3, 14, 18, 6, 12, 8, 10, 16],
+      18: [3, 14, 18, 6, 12, 8, 10, 16, 1],
+      19: [3, 14, 18, 6, 12, 8, 10, 16, 1],
+      20: [3, 14, 18, 6, 12, 8, 10, 16, 1, 7],
+      21: [3, 14, 18, 6, 12, 8, 10, 16, 1, 7],
+      22: [3, 14, 18, 6, 12, 8, 10, 16, 1, 7, 5],
+      23: [3, 14, 18, 6, 12, 8, 10, 16, 1, 7, 5],
+      24: [3, 14, 18, 6, 12, 8, 10, 16, 1, 7, 5, 13],
+      25: [3, 14, 18, 6, 12, 8, 10, 16, 1, 7, 5, 13],
+      26: [3, 14, 18, 6, 12, 8, 10, 16, 1, 7, 5, 13, 9],
+      27: [3, 14, 18, 6, 12, 8, 10, 16, 1, 7, 5, 13, 9],
+      28: [3, 14, 18, 6, 12, 8, 10, 16, 1, 7, 5, 13, 9, 15],
+      29: [3, 14, 18, 6, 12, 8, 10, 16, 1, 7, 5, 13, 9, 15],
+      30: [3, 14, 18, 6, 12, 8, 10, 16, 1, 7, 5, 13, 9, 15, 11],
+      31: [3, 14, 18, 6, 12, 8, 10, 16, 1, 7, 5, 13, 9, 15, 11],
+      32: [3, 14, 18, 6, 12, 8, 10, 16, 1, 7, 5, 13, 9, 15, 11, 4],
+      33: [3, 14, 18, 6, 12, 8, 10, 16, 1, 7, 5, 13, 9, 15, 11, 4],
+      34: [3, 14, 18, 6, 12, 8, 10, 16, 1, 7, 5, 13, 9, 15, 11, 4, 17],
+      35: [3, 14, 18, 6, 12, 8, 10, 16, 1, 7, 5, 13, 9, 15, 11, 4, 17],
+      36: [3, 14, 18, 6, 12, 8, 10, 16, 1, 7, 5, 13, 9, 15, 11, 4, 17, 2]
+    }
+
+    function getRandomInt(max) {
+      return Math.floor(Math.random() * max);
+    }
+
+    function PickCali()
+    {
+          // get all players
+      var players = [];
+      var playerList = document.getElementById('playersList');
+      var names = playersList.querySelectorAll('.playerName');
+      names.forEach((item) => players.push(item.innerHTML));
+
+            // remove previous calis
+      for (var i = 0; i < CaliPlayersPicked.length; i++)
+      {
+        players = players.filter(j => j != CaliPlayersPicked[i]);
+      }
+
+      if (players.length == 0)
+      {
+        CaliPlayersPicked = [];
+        names.forEach((item) => players.push(item.innerHTML));
+        console.log("no takers, reseting");
+      }
+
+            // pick a random player
+      var candidate = players[getRandomInt(players.length)];
+      console.log(candidate);
+
+            // save off player
+      CaliPlayersPicked.push(candidate);
+
+            // populate cali element
+      document.getElementById('caliPlayer').innerHTML = candidate;
+    }
+
+    function AddPlayer()
+    {
+          // get player name
+      var playerName = document.getElementById('addPlayerInput').value;
+      playerName = playerName.trim();
+
+      if (playerName == "")
+        return;
+
+            // create entry
+      var container = document.createElement('div');
+      container.className = 'exitingPlayerEntry';
+
+      var nameContainer = document.createElement('div');
+      nameContainer.innerHTML = playerName;
+      nameContainer.className = 'playerName';
+      container.appendChild(nameContainer);
+
+      var slowButton = document.createElement('div');
+      slowButton.innerHTML = "s";
+      slowButton.className = 'slowPlayer';
+      slowButton.onclick = function() { ToggleSlow(slowButton); };
+      container.appendChild(slowButton);
+
+      var removeButton = document.createElement('div');
+      removeButton.innerHTML = "x";
+      removeButton.className = 'removePlayer';
+      removeButton.onclick = function() { RemovePlayer(removeButton); };
+      container.appendChild(removeButton);
+
+            // add entry
+      var addContainer = document.getElementById('newPlayer');
+      var parent = document.getElementById('playersList');
+      parent.insertBefore(container, addContainer);
+
+            // clear input
+      document.getElementById('addPlayerInput').value = "";
+    }
+
+    function RemovePlayer(element)
+    {
+      var parent = element.parentElement;
+      var playerList = document.getElementById('playersList');
+      playerList.removeChild(parent);
+    }
+
+    function ToggleSlow(element)
+    {
+      var parent = element.parentElement;
+      var player = parent.querySelectorAll('.playerName')[0].innerHTML;
+
+      if (element.classList.contains('slowed'))
+        element.classList.remove('slowed');
+      else
+        element.classList.add('slowed');
+
+      for (var i = 0; i < SlowPlayers.length; i++)
+      {
+        if (SlowPlayers[i] == player)
+        {
+          SlowPlayers.splice(i, 1);
+          return;
+        }
+      }
+
+      SlowPlayers.push(player);
+    }
+
+    function ClearCali()
+    {
+      document.getElementById('caliPlayer').innerHTML = '';
+    }
+
+    function MakeTeams()
+    {
+        // remove all team elements
+        var teamsContainer = document.getElementById('teamsContainer2');
+        teamsContainer.innerHTML = '';
+
+        // calculate team amount
+        var players = [];
+        var playerList = document.getElementById('playersList');
+        var names = playersList.querySelectorAll('.playerName');
+        names.forEach((item) => players.push(item.innerHTML));
+
+        var teamCount = Math.round(players.length / 2);
+        var cardCount = Math.round(teamCount / 2);
+
+        // get the list of holes based on player amount
+        var holeConfig = HoleConfig[teamCount];
+
+        var teams = [];
+        // remove cali and make them team 1
+        var cali = document.getElementById('caliPlayer').innerHTML;
+        if (cali != '')
+        {
+            // add the team
+            var newTeam = { 
+                teamPlayers: [cali], 
+                speed: 0 
+            };
+            teams.push(newTeam);
+            // 1 team down
+            teamCount--;
+            // remove from list of players
+            players = players.filter(j => j != cali);
+        }
+
+        // while we are short of teams, remove players to make teams
+        while (teamCount > 0)
+        {
+            var p1Index = getRandomInt(players.length);
+            var player1 = players[p1Index];
+            players.splice(p1Index, 1);
+            var p2Index = getRandomInt(players.length);
+            var player2 = players[p2Index];
+            players.splice(p2Index, 1);
+
+            var teamSpeed = 0;
+
+            for (var i = 0; i < SlowPlayers.length; i++)
+            {
+                if (player1 == SlowPlayers[i])
+                    teamSpeed += 5;
+                if (player2 == SlowPlayers[i])
+                    teamSpeed += 5;
+            }
+
+            var newTeam = { 
+                teamPlayers: [player1, player2], 
+                speed: teamSpeed
+            };
+            teams.push(newTeam);
+            teamCount--;
+        }
+
+        // sort teams by slowest first
+        teams.sort(function(teamA, teamB) {
+            return teamB.speed - teamA.speed;
+        });
+
+        for (var i = 0; i < teams.length; i++)
+        {
+            var team = teams[i];
+            var debugString = "players: ";
+            for (var j = 0; j < team.teamPlayers.length; j++)
+            {
+                debugString += team.teamPlayers[j] + ", ";
+            }
+            debugString += "speed: " + team.speed;
+        }
+
+        // build cards and distribute slow play
+        var cards = [];
+        // go down the list of team and build cards
+        while (cardCount > 0)
+        {
+            if (cardCount == 1 && teams.length == 1)
+            {
+                cards[cards.length - 1].teams.push(teams[0])
+                cards[cards.length - 1].speed += teams[0].speed;
+                break;
+            }
+
+            var p1Index = getRandomInt(teams.length);
+            var team1 = teams[p1Index];
+            teams.splice(p1Index, 1);
+            var p2Index = getRandomInt(teams.length);
+            var team2 = teams[p2Index];
+            teams.splice(p2Index, 1);
+
+            var cardSpeed = team1.speed + team2.speed;
+
+            var card = { 
+                teams: [team1, team2], 
+                speed: cardSpeed
+            };
+            cards.push(card);
+            cardCount--;
+        }
+
+        cards.sort(function(cardA, cardB) {
+            return cardB.speed - cardA.speed;
+        });
+
+        // assign teams to holes
+        for (var i = 0; i < holeConfig.length; i++)
+        {
+            cards[i].hole = holeConfig[i];
+        }
+
+        // print it to results
+        for (var i = 0; i < cards.length; i++)
+        {
+            var card = cards[i];
+            var debugString = "cards: hole " + card.hole + " team 1 ";
+            for (var j = 0; j < card.teams[0].teamPlayers.length; j++)
+            {
+                debugString += card.teams[0].teamPlayers[j] + ", ";
+            }
+            debugString += "team 2 ";
+            for (var j = 0; j < card.teams[1].teamPlayers.length; j++)
+            {
+                debugString += card.teams[1].teamPlayers[j] + ", ";
+            }
+            debugString += " speed: " + card.speed;
+            //console.log(debugString);
+        }
+
+        var overallContainer = document.getElementById('teamsContainer2');
+        overallContainer.innerHTML = '';
+        for (var i = 0; i < cards.length; i++)
+        {
+            var card = cards[i];
+
+            var container1 = document.createElement('div');
+            container1.className = 'teamEntry';
+            overallContainer.appendChild(container1);
+
+            var holeNumber = document.createElement('div');
+            holeNumber.className = 'holeNumber';
+            holeNumber.innerHTML = card.hole;
+            container1.appendChild(holeNumber);
+
+            var teamsContainer = document.createElement('div');
+            teamsContainer.className = 'teamsContainer';
+            container1.appendChild(teamsContainer);
+
+            var teamsContainer1 = document.createElement('div');
+            teamsContainer1.className = 'teamsContainer1';
+            teamsContainer.appendChild(teamsContainer1);
+
+            var teamsContainerTitle1 = document.createElement('div');
+            teamsContainerTitle1.className = 'teamsContainerTitle';
+            teamsContainerTitle1.innerHTML = 'Team 1';
+            teamsContainer1.appendChild(teamsContainerTitle1);
+
+            var teamsContainerTeam1 = document.createElement('div');
+            teamsContainerTeam1.className = 'teamsContainerTeam';
+            var team = card.teams[0].teamPlayers[0] + ' + ' + card.teams[0].teamPlayers[1];
+            if (card.teams[0].teamPlayers[0] == null)
+                team = card.teams[0].teamPlayers[1];
+            if (card.teams[0].teamPlayers[1] == null)
+                team = card.teams[0].teamPlayers[0];
+            teamsContainerTeam1.innerHTML = team;
+            teamsContainer1.appendChild(teamsContainerTeam1);
+
+            var teamsContainer2 = document.createElement('div');
+            teamsContainer2.className = 'teamsContainer2';
+            teamsContainer.appendChild(teamsContainer2);
+
+            var teamsContainerTitle2 = document.createElement('div');
+            teamsContainerTitle2.className = 'teamsContainerTitle';
+            teamsContainerTitle2.innerHTML = 'Team 2';
+            teamsContainer2.appendChild(teamsContainerTitle2);
+
+            var teamsContainerTeam2 = document.createElement('div');
+            teamsContainerTeam2.className = 'teamsContainerTeam';
+            var team = card.teams[1].teamPlayers[0] + ' + ' + card.teams[1].teamPlayers[1];
+            if (card.teams[1].teamPlayers[0] == null)
+                team = card.teams[1].teamPlayers[1];
+            if (card.teams[1].teamPlayers[1] == null)
+                team = card.teams[1].teamPlayers[0];
+            teamsContainerTeam2.innerHTML = team;
+            teamsContainer2.appendChild(teamsContainerTeam2);
+
+            // rare 3rd team
+            if (card.teams.length == 3)
+            {
+                var teamsContainer3 = document.createElement('div');
+                teamsContainer3.className = 'teamsContainer3';
+                teamsContainer.appendChild(teamsContainer3);
+
+                var teamsContainerTitle3 = document.createElement('div');
+                teamsContainerTitle3.className = 'teamsContainerTitle';
+                teamsContainerTitle3.innerHTML = 'Team 3';
+                teamsContainer3.appendChild(teamsContainerTitle3);
+
+                var teamsContainerTeam3 = document.createElement('div');
+                teamsContainerTeam3.className = 'teamsContainerTeam';
+                var team = card.teams[2].teamPlayers[0] + ' + ' + card.teams[2].teamPlayers[1];
+                if (card.teams[2].teamPlayers[0] == null)
+                    team = card.teams[2].teamPlayers[1];
+                if (card.teams[2].teamPlayers[1] == null)
+                    team = card.teams[2].teamPlayers[0];
+                teamsContainerTeam3.innerHTML = team;
+                teamsContainer3.appendChild(teamsContainerTeam3);
+            }
+        }
+
+        document.getElementById("teamsContainer2").style.height = cards.length * 100 + "px";
+    }
+    
+  </script>
+
+  <style>
+    :root {
+      --font-color1: #111118;
+      --font-color2: #bbbdc7;
+      --font-color3: #bbbdc7;
+      --font-color4: #bbbdc7;
+    }
+
+    body {
+      margin: 0px;
+      padding: 0px;
+      display: flex;
+      width: 100%;
+      background-color: #101010;
+      user-select: none; 
+    }
+
+    #promptContainer {
+      margin: auto;
+      width: 100%;
+      height: 100%;
+      max-width: 950px;
+      display: block;
+      background-color: #1c1c2a;
+      border-radius: 4px;
+    }
+
+    #titleContainer {
+      display: flex;
+      height: 40px;
+      background-color: #96BBBB;
+    }
+
+    #title {
+      margin-top: 7px;
+      margin-left: 15px;
+      display: flex;
+      font-family: Arial, sans-serif;
+      font-weight: 300;
+      color: var(--font-color1);
+    }
+
+    #bodyContainer {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+      height: 100%;
+    }
+
+    #entryContainer {
+      display: flex;
+      width: 100%;
+    }
+
+    #resultsPane {
+      display: flex;
+      width: 100%;
+      flex-direction: column;
+    }
+
+    #playersContainer {
+      display: flex;
+      width: 50%;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #buttonContainer {
+      display: flex;
+      width: 50%;
+      height: 250px;
+    }
+
+    #buttonContainer2 {
+      display: flex;
+      flex-wrap: wrap;
+      flex-direction: column;
+    }
+
+    #playersContainer2 {
+      display: flex;
+      flex-direction: column;
+      padding: 10px;
+    }
+
+    #playersTitle {
+      display: flex;
+      padding: 10px;
+      color: var(--font-color2);
+      font-family: Luminari, fantasy;
+      font-weight: 400;
+      font-size: 24;
+      margin-bottom: 4px;
+    }
+
+    #caliContainer {
+      display: flex;
+      width: 100%;
+      padding-top: 20px;
+      padding-bottom: 20px;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #caliContainer2 {
+      display: flex;
+    }
+
+    #caliTitle {
+      display: flex;
+      height: 40px;
+      width: 80px;
+      align-items: center;
+      justify-content: center;
+      font-family: Arial, sans-serif;
+      font-weight: 600;
+      color: #fbfffe;
+      border-radius: 4px 0 0 4px;
+      background: #de8f2c;
+      text-shadow: 1px 1px 2px #111111;
+    }
+
+    #caliPlayer {
+      display: flex;
+      width: 200px;
+      height: 40px;
+      align-items: center;
+      justify-content: center;
+      background: #fbfffe;
+      font-family: Arial, sans-serif;
+      font-weight: 600;
+    }
+
+    #teamsContainer {
+      display: flex;
+      width: 100%;
+      height: 100px;
+    }
+
+    #playersList {
+      display: flex;
+      flex-direction: column;
+    }
+
+    #addPlayer {
+      display: flex;
+      padding: 10px;
+      align-items: center;
+      justify-content: center;
+      background-color: #96BBBB;
+      font-family: Arial, sans-serif;
+      font-weight: 600;
+      color: var(--font-color1);
+      border-radius: 4px;
+    }
+
+    #addPlayerInput {
+      display: flex;
+      width: 160px;
+      margin-bottom: 4px;
+    }
+
+    .exitingPlayerEntry {
+      display: flex;
+      width: 160px;
+      margin-bottom:1px;
+      align-items: center;
+      justify-content: center;
+      background: #F2E3BC;
+    }
+
+    .playerName {
+      display: flex;
+      width: 70px;
+      padding: 4px;
+      padding-left: 4px;
+      align-items: center;
+      font-family: Arial, sans-serif;
+      font-weight: 300;
+    }
+
+    .removePlayer {
+      display: flex;
+      width: 30px;
+      height: 30px;
+      justify-content: center;
+      align-items: center;
+      font-family: FreeMono, monospace;
+      font-weight: 600;
+      font-size: 20;
+      color: #D11149;
+    }
+
+    .slowPlayer {
+      display: flex;
+      align-items: center;
+      font-family: FreeMono, monospace;
+      font-weight: 600;
+      font-size: 20;
+      width: 30px;
+      height: 30px;
+      justify-content: center;
+      color: #0E5384;
+    }
+
+    .slowed {
+      color: #F2E3BC;
+      background: #0E5384;
+    }
+
+    .holeNumber {
+      display: flex;
+      padding: 4px;
+      width: 40px;
+      height: 40px;
+      margin-right: 20px;
+      align-items: center;
+      justify-content: center;
+      background: #96BBBB;
+      font-family: Arial, sans-serif;
+      font-weight: 300;
+      font-size: 30;
+      border-radius: 6px;
+    }
+
+    .teamsContainer1 {
+      display: flex;
+      flex-wrap: wrap;
+      flex-direction: column;
+      width: 250px;
+      height: 80px;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .teamsContainer {
+      display: flex;
+      flex-wrap: wrap;
+      flex-direction: column;
+      height: 80px;
+      width: 500px;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .teamsContainer2 {
+      display: flex;
+      flex-wrap: wrap;
+      flex-direction: column;
+      width: 250px;
+      height: 80px;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .teamEntry {
+      margin-top: 10px;
+      display: flex;
+      width: 700px;
+      align-items: center;
+      justify-content: center;
+      background: #1c1c2a;
+    }
+
+    .teamsContainerTitle {
+      display: flex;
+      flex-wrap: wrap;
+      width: 250px;
+      height: 40px;
+      margin-right: 20px;
+      align-items: center;
+      justify-content: center;
+      font-family: Arial, sans-serif;
+      font-weight: 300;
+      font-size: 30;
+      background: #96BBBB;
+    }
+
+    .teamsContainerTeam {
+      display: flex;
+      flex-wrap: wrap;
+      width: 250px;
+      height: 40px;
+      margin-right: 20px;
+      align-items: center;
+      justify-content: center;
+      font-family: Arial, sans-serif;
+      font-weight: 300;
+      font-size: 30;
+      background: #F2E3BC;
+      text-wrap: nowrap;
+    }
+
+    #teamsContainer {
+      display: flex;
+    }
+
+    #teamsContainer2 {
+      display: flex;
+      flex-wrap: wrap;
+      background: #1c1c2a;
+    }
+
+    input {
+      display: flex;
+      height:30px;
+      background: #FBFFFE;
+    }
+
+    #caliButton {
+      margin-top: 30px;
+    }
+
+    #makeTeamsButton {
+      margin-top: 30px;
+    }
+
+    .button1 a{
+      color:white;
+      font-family:Helvetica, sans-serif;
+      font-weight:bold;
+      font-size:36px;
+      text-align: center;
+      text-decoration:none;
+      background-color:#de8f2c;
+      display:block;
+      position:relative;
+      padding:20px 40px;
+
+      -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+      text-shadow: 0px 1px 0px #000;
+      filter: dropshadow(color=#000, offx=0px, offy=1px);
+
+      -webkit-box-shadow:inset 0 1px 0 #FFE5C4, 0 10px 0 #915100;
+      -moz-box-shadow:inset 0 1px 0 #FFE5C4, 0 10px 0 #915100;
+      box-shadow:inset 0 1px 0 #FFE5C4, 0 10px 0 #915100;
+
+      -webkit-border-radius: 5px;
+      -moz-border-radius: 5px;
+      border-radius: 5px;
+    }
+
+    .button1 a:active{
+      top:10px;
+      background-color:#c7740e;
+
+      -webkit-box-shadow:inset 0 1px 0 #FFE5C4, inset 0 -3px 0 #915100;
+      -moz-box-shadow:inset 0 1px 0 #FFE5C4, inset 0 -3pxpx 0 #915100;
+      box-shadow:inset 0 1px 0 #FFE5C4, inset 0 -3px 0 #915100;
+    }
+
+    .button1:after {
+      content:"";
+      padding:4px;
+      position: absolute;
+      bottom:-15px;
+      left:-4px;
+      z-index:-1;
+      background-color:#2B1800;
+      -webkit-border-radius: 5px;
+      -moz-border-radius: 5px;
+      border-radius: 5px;
+    }
+
+    .button2 a{
+      color:white;
+      font-family:Helvetica, sans-serif;
+      font-weight:bold;
+      font-size:36px;
+      text-align: center;
+      text-decoration:none;
+      background-color:#5a9435;
+      display:block;
+      position:relative;
+      padding:20px 40px;
+
+      -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+      text-shadow: 0px 1px 0px #000;
+      filter: dropshadow(color=#000, offx=0px, offy=1px);
+
+      -webkit-box-shadow:inset 0 1px 0 #a7dba2, 0 10px 0 #124a00;
+      -moz-box-shadow:inset 0 1px 0 #a7dba2, 0 10px 0 #124a00;
+      box-shadow:inset 0 1px 0 #a7dba2, 0 10px 0 #124a00;
+
+      -webkit-border-radius: 5px;
+      -moz-border-radius: 5px;
+      border-radius: 5px;
+    }
+
+    .button2 a:active{
+      top:10px;
+      background-color:#457328;
+
+      -webkit-box-shadow:inset 0 1px 0 #a7dba2, inset 0 -3px 0 #124a00;
+      -moz-box-shadow:inset 0 1px 0 #a7dba2, inset 0 -3pxpx 0 #124a00;
+      box-shadow:inset 0 1px 0 #a7dba2, inset 0 -3px 0 #124a00;
+    }
+
+    .button2:after {
+      content:"";
+      padding:4px;
+      position: absolute;
+      bottom:-15px;
+      left:-4px;
+      z-index:-1;
+      background-color:#002b05;
+      -webkit-border-radius: 5px;
+      -moz-border-radius: 5px;
+      border-radius: 5px;
+    }
+
+  </style>
+</head>
+
+<body oncontextmenu="return false;">
+  <div id="promptContainer">
+    <div id="titleContainer" >
+      <h3 id="title" >平 Disc Golf Doubles Form</h3>
+    </div>
+    <div id="bodyContainer">
+      <div id="entryContainer">
+        <div id="playersContainer">
+          <div id="playersContainer2">
+            <div id="playersTitle">Players</div>
+            <div id="playersList">
+              <div id="newPlayer">
+                <input id="addPlayerInput"></input>
+                <div id="addPlayer" onclick="AddPlayer()">Add Player</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div id="buttonContainer">
+          <div id="buttonContainer2">
+            <div class="button1" id="caliButton" onclick="PickCali()">
+              <a href="#">Pick Cali</a>
+            </div>
+            <div class="button2" id="makeTeamsButton" onclick="MakeTeams()">
+              <a href="#">Make Teams</a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div id="resultsPane">
+        <div id="caliContainer">
+          <div id="caliContainer2">
+            <div id="caliTitle"  onclick="ClearCali()">Cali</div>
+            <div id="caliPlayer" onclick="ClearCali()"></div>
+          </div>
+        </div>
+        <div id="teamsContainer">
+          <div id="teamsContainer2">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
