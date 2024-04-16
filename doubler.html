@@ -5,150 +5,159 @@
     var SlowPlayers = [];
 
     var HoleConfig = {
-      2: [3],
-      3: [3],
-      4: [3, 18],
-      5: [3, 18],
-      6: [3, 14, 18],
-      7: [3, 14, 18],
-      8: [3, 14, 18, 6],
-      9: [3, 14, 18, 6],
-      10: [3, 14, 18, 6, 12],
-      11: [3, 14, 18, 6, 12],
-      12: [3, 14, 18, 6, 12, 8],
-      13: [3, 14, 18, 6, 12, 8],
-      14: [3, 14, 18, 6, 12, 8, 10],
-      15: [3, 14, 18, 6, 12, 8, 10],
-      16: [3, 14, 18, 6, 12, 8, 10, 16],
-      17: [3, 14, 18, 6, 12, 8, 10, 16],
-      18: [3, 14, 18, 6, 12, 8, 10, 16, 1],
-      19: [3, 14, 18, 6, 12, 8, 10, 16, 1],
-      20: [3, 14, 18, 6, 12, 8, 10, 16, 1, 7],
-      21: [3, 14, 18, 6, 12, 8, 10, 16, 1, 7],
-      22: [3, 14, 18, 6, 12, 8, 10, 16, 1, 7, 5],
-      23: [3, 14, 18, 6, 12, 8, 10, 16, 1, 7, 5],
-      24: [3, 14, 18, 6, 12, 8, 10, 16, 1, 7, 5, 13],
-      25: [3, 14, 18, 6, 12, 8, 10, 16, 1, 7, 5, 13],
-      26: [3, 14, 18, 6, 12, 8, 10, 16, 1, 7, 5, 13, 9],
-      27: [3, 14, 18, 6, 12, 8, 10, 16, 1, 7, 5, 13, 9],
-      28: [3, 14, 18, 6, 12, 8, 10, 16, 1, 7, 5, 13, 9, 15],
-      29: [3, 14, 18, 6, 12, 8, 10, 16, 1, 7, 5, 13, 9, 15],
-      30: [3, 14, 18, 6, 12, 8, 10, 16, 1, 7, 5, 13, 9, 15, 11],
-      31: [3, 14, 18, 6, 12, 8, 10, 16, 1, 7, 5, 13, 9, 15, 11],
-      32: [3, 14, 18, 6, 12, 8, 10, 16, 1, 7, 5, 13, 9, 15, 11, 4],
-      33: [3, 14, 18, 6, 12, 8, 10, 16, 1, 7, 5, 13, 9, 15, 11, 4],
-      34: [3, 14, 18, 6, 12, 8, 10, 16, 1, 7, 5, 13, 9, 15, 11, 4, 17],
-      35: [3, 14, 18, 6, 12, 8, 10, 16, 1, 7, 5, 13, 9, 15, 11, 4, 17],
-      36: [3, 14, 18, 6, 12, 8, 10, 16, 1, 7, 5, 13, 9, 15, 11, 4, 17, 2]
+        2: [3],
+        3: [3],
+        4: [3, 18],
+        5: [3, 18],
+        6: [3, 14, 18],
+        7: [3, 14, 18],
+        8: [3, 14, 18, 6],
+        9: [3, 14, 18, 6],
+        10: [3, 14, 18, 6, 12],
+        11: [3, 14, 18, 6, 12],
+        12: [3, 14, 18, 6, 12, 8],
+        13: [3, 14, 18, 6, 12, 8],
+        14: [3, 14, 18, 6, 12, 8, 10],
+        15: [3, 14, 18, 6, 12, 8, 10],
+        16: [3, 14, 18, 6, 12, 8, 10, 16],
+        17: [3, 14, 18, 6, 12, 8, 10, 16],
+        18: [3, 14, 18, 6, 12, 8, 10, 16, 1],
+        19: [3, 14, 18, 6, 12, 8, 10, 16, 1],
+        20: [3, 14, 18, 6, 12, 8, 10, 16, 1, 7],
+        21: [3, 14, 18, 6, 12, 8, 10, 16, 1, 7],
+        22: [3, 14, 18, 6, 12, 8, 10, 16, 1, 7, 5],
+        23: [3, 14, 18, 6, 12, 8, 10, 16, 1, 7, 5],
+        24: [3, 14, 18, 6, 12, 8, 10, 16, 1, 7, 5, 13],
+        25: [3, 14, 18, 6, 12, 8, 10, 16, 1, 7, 5, 13],
+        26: [3, 14, 18, 6, 12, 8, 10, 16, 1, 7, 5, 13, 9],
+        27: [3, 14, 18, 6, 12, 8, 10, 16, 1, 7, 5, 13, 9],
+        28: [3, 14, 18, 6, 12, 8, 10, 16, 1, 7, 5, 13, 9, 15],
+        29: [3, 14, 18, 6, 12, 8, 10, 16, 1, 7, 5, 13, 9, 15],
+        30: [3, 14, 18, 6, 12, 8, 10, 16, 1, 7, 5, 13, 9, 15, 11],
+        31: [3, 14, 18, 6, 12, 8, 10, 16, 1, 7, 5, 13, 9, 15, 11],
+        32: [3, 14, 18, 6, 12, 8, 10, 16, 1, 7, 5, 13, 9, 15, 11, 4],
+        33: [3, 14, 18, 6, 12, 8, 10, 16, 1, 7, 5, 13, 9, 15, 11, 4],
+        34: [3, 14, 18, 6, 12, 8, 10, 16, 1, 7, 5, 13, 9, 15, 11, 4, 17],
+        35: [3, 14, 18, 6, 12, 8, 10, 16, 1, 7, 5, 13, 9, 15, 11, 4, 17],
+        36: [3, 14, 18, 6, 12, 8, 10, 16, 1, 7, 5, 13, 9, 15, 11, 4, 17, 2]
     }
 
     function getRandomInt(max) {
-      return Math.floor(Math.random() * max);
+        return Math.floor(Math.random() * max);
     }
 
     function PickCali()
     {
-          // get all players
-      var players = [];
-      var playerList = document.getElementById('playersList');
-      var names = playersList.querySelectorAll('.playerName');
-      names.forEach((item) => players.push(item.innerHTML));
-
-            // remove previous calis
-      for (var i = 0; i < CaliPlayersPicked.length; i++)
-      {
-        players = players.filter(j => j != CaliPlayersPicked[i]);
-      }
-
-      if (players.length == 0)
-      {
-        CaliPlayersPicked = [];
+        // get all players
+        var players = [];
+        var playerList = document.getElementById('playersList');
+        var names = playersList.querySelectorAll('.playerName');
         names.forEach((item) => players.push(item.innerHTML));
-        console.log("no takers, reseting");
-      }
 
-            // pick a random player
-      var candidate = players[getRandomInt(players.length)];
-      console.log(candidate);
+        // remove previous calis
+        for (var i = 0; i < CaliPlayersPicked.length; i++)
+        {
+            players = players.filter(j => j != CaliPlayersPicked[i]);
+        }
 
-            // save off player
-      CaliPlayersPicked.push(candidate);
+        if (players.length == 0)
+        {
+            CaliPlayersPicked = [];
+            names.forEach((item) => players.push(item.innerHTML));
+            console.log("no takers, reseting");
+        }
 
-            // populate cali element
-      document.getElementById('caliPlayer').innerHTML = candidate;
+        // pick a random player
+        var candidate = players[getRandomInt(players.length)];
+        console.log(candidate);
+
+        // save off player
+        CaliPlayersPicked.push(candidate);
+
+        // populate cali element
+        document.getElementById('caliPlayer').innerHTML = candidate;
     }
 
     function AddPlayer()
     {
-          // get player name
-      var playerName = document.getElementById('addPlayerInput').value;
-      playerName = playerName.trim();
+        // get player name
+        var playerName = document.getElementById('addPlayerInput').value;
+        playerName = playerName.trim();
 
-      if (playerName == "")
-        return;
+        if (playerName == "")
+            return;
 
-            // create entry
-      var container = document.createElement('div');
-      container.className = 'exitingPlayerEntry';
+        // create entry
+        var container = document.createElement('div');
+        container.className = 'exitingPlayerEntry';
 
-      var nameContainer = document.createElement('div');
-      nameContainer.innerHTML = playerName;
-      nameContainer.className = 'playerName';
-      container.appendChild(nameContainer);
+        var nameContainer = document.createElement('div');
+        nameContainer.innerHTML = playerName;
+        nameContainer.className = 'playerName';
+        container.appendChild(nameContainer);
 
-      var slowButton = document.createElement('div');
-      slowButton.innerHTML = "s";
-      slowButton.className = 'slowPlayer';
-      slowButton.onclick = function() { ToggleSlow(slowButton); };
-      container.appendChild(slowButton);
+        var slowButton = document.createElement('div');
+        slowButton.innerHTML = "s";
+        slowButton.className = 'slowPlayer';
+        slowButton.onclick = function() { ToggleSlow(slowButton); };
+        container.appendChild(slowButton);
 
-      var removeButton = document.createElement('div');
-      removeButton.innerHTML = "x";
-      removeButton.className = 'removePlayer';
-      removeButton.onclick = function() { RemovePlayer(removeButton); };
-      container.appendChild(removeButton);
+        var removeButton = document.createElement('div');
+        removeButton.innerHTML = "x";
+        removeButton.className = 'removePlayer';
+        removeButton.onclick = function() { RemovePlayer(removeButton); };
+        container.appendChild(removeButton);
 
-            // add entry
-      var addContainer = document.getElementById('newPlayer');
-      var parent = document.getElementById('playersList');
-      parent.insertBefore(container, addContainer);
+        // add entry
+        var addContainer = document.getElementById('newPlayer');
+        var parent = document.getElementById('playersList');
+        parent.insertBefore(container, addContainer);
 
-            // clear input
-      document.getElementById('addPlayerInput').value = "";
+        var players = [];
+        var playerList = document.getElementById('playersList');
+        var names = playersList.querySelectorAll('.playerName');
+        names.forEach((item) => players.push(item.innerHTML));
+
+        var playerCount = players.length;
+        var teamCount = Math.round(players.length / 2);
+
+        // clear input
+        document.getElementById('addPlayerInput').value = "";
+        document.getElementById('playersTitle').innerHTML = "Players: <a style='margin-left:2px;margin-right:2px; color:#96BBBB;'>" + playerCount + "</a>|<a style='margin-left:2px; color:#7b7b7b;'>" + teamCount + "</a>";
     }
 
     function RemovePlayer(element)
     {
-      var parent = element.parentElement;
-      var playerList = document.getElementById('playersList');
-      playerList.removeChild(parent);
+        var parent = element.parentElement;
+        var playerList = document.getElementById('playersList');
+        playerList.removeChild(parent);
     }
 
     function ToggleSlow(element)
     {
-      var parent = element.parentElement;
-      var player = parent.querySelectorAll('.playerName')[0].innerHTML;
+        var parent = element.parentElement;
+        var player = parent.querySelectorAll('.playerName')[0].innerHTML;
 
-      if (element.classList.contains('slowed'))
-        element.classList.remove('slowed');
-      else
-        element.classList.add('slowed');
+        if (element.classList.contains('slowed'))
+            element.classList.remove('slowed');
+        else
+            element.classList.add('slowed');
 
-      for (var i = 0; i < SlowPlayers.length; i++)
-      {
-        if (SlowPlayers[i] == player)
+        for (var i = 0; i < SlowPlayers.length; i++)
         {
-          SlowPlayers.splice(i, 1);
-          return;
+            if (SlowPlayers[i] == player)
+            {
+                SlowPlayers.splice(i, 1);
+                return;
+            }
         }
-      }
 
-      SlowPlayers.push(player);
+        SlowPlayers.push(player);
     }
 
     function ClearCali()
     {
-      document.getElementById('caliPlayer').innerHTML = '';
+        document.getElementById('caliPlayer').innerHTML = '';
     }
 
     function MakeTeams()
