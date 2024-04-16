@@ -131,6 +131,17 @@
         var parent = element.parentElement;
         var playerList = document.getElementById('playersList');
         playerList.removeChild(parent);
+
+        var players = [];
+        var playerList = document.getElementById('playersList');
+        var names = playersList.querySelectorAll('.playerName');
+        names.forEach((item) => players.push(item.innerHTML));
+
+        var playerCount = players.length;
+        var teamCount = Math.round(players.length / 2);
+
+        // clear input
+        document.getElementById('playersTitle').innerHTML = "Players: <a style='margin-left:2px;margin-right:2px; color:#96BBBB;'>" + playerCount + "</a>|<a style='margin-left:2px; color:#7b7b7b;'>" + teamCount + "</a>";
     }
 
     function ToggleSlow(element)
