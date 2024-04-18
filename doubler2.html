@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>The Doubler</title>
+<style>
+
+  :root {
+    --white: #FEF9EF;
+    --bg-color: #F5F1ED;
+    --section-color: #ECE0D2;
+    --random-color: #FFC100;
+    --controls-bg: #342E37;
+    --hole-color: #E97300;
+    --hole-stroke-color: #2f2317;
+    --make-teams-color: #7cb518;
+    --pick-cali-color: #FFC100;
+    --team1-color: #ECE0D2;
+    --team1-border: #866B22;
+    --team2-color: #FEF9EF;
+    --font-color1: #04030f;
+    --font-color2: #46494C;
+    --font-hole-color: #FEF9EF;
+    --font-hole-stroke-color: #2f2317;
+  }
+
+  body {
+    display:flex;
+    flex-direction:column;
+    background: var(--bg-color);
+    margin: 0px;
+  }
+  
+  .sectionHeader {
+  width:100%;
+    background: var(--section-color);
+    padding-top:20px;
+    padding-bottom:20px;
+    outline: solid var(--font-color1);
+  }
+  
+  .holeNumber {
+    display:flex;
+    justify-content: center;
+    align-items: center;
+    width:6vw;
+    height:6vw;
+    padding: 12px;
+    margin-left:6%;
+    margin-right:5%;
+    background: var(--hole-color);
+    outline: solid var(--hole-stroke-color);
+    font-family: 'Trebuchet MS', sans-serif;
+    font-size: 5vw;
+    font-weight: 900;
+    color: var(--font-hole-color);
+    -webkit-text-stroke: 6px var(--font-hole-stroke-color);
+    paint-order: stroke fill;
+    border-radius:15px;
+  }
+  
+  .cardEntry {
+    display:flex;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  
+  .teamsEntry {
+    display:flex;
+    flex-direction:column;
+    width: 70%;
+    padding: 8px;
+  }
+  
+  .teamEntry1 {
+    display:flex;
+    padding: 8px;
+    width: 100%;
+    font-family: Verdana, sans-serif;
+    font-size: 3vw;
+    background: var(--team1-color);
+    border: 2px solid var(--team1-border);
+  }
+  
+  .teamEntry2 {
+    display:flex;
+    padding: 8px;
+    width: 100%;
+    font-family: Verdana, sans-serif;
+    font-size: 3vw;
+    background: var(--team2-color);
+    border: 2px solid var(--team1-border);
+    border-top: none;
+  }
+  
+  .playerEntry {
+    display:flex;
+    padding: 8px;
+    width: 80%;
+    font-family: Verdana, sans-serif;
+    font-size: 3vw;
+    background: var(--team2-color);
+    outline: 2px solid var(--team1-border);
+  }
+ 
+  #formatContainer {
+    display:flex;
+    width:fit-content;
+    margin-left: auto;
+    margin-right: auto;
+  }
+ 
+  #formatText {
+    font-family: 'Trebuchet MS', sans-serif;
+    font-size: 8vw;
+    padding-top:2vw;
+    padding-bottom:2vw;
+    margin-right:3vw;
+    color: var(--font-color1);
+    opacity: .5;
+  }
+  
+  #formatToggle {
+    font-family: 'Trebuchet MS', sans-serif;
+    font-size: 8vw;
+    color: var(--font-color1);
+    background: var(--random-color);
+    padding:4vw;
+    padding-top:2vw;
+    padding-bottom:2vw;
+    border: solid var(--font-color1);
+    cursor:pointer;
+  }
+  
+  #cardsSection {
+    display:flex;
+    flex-direction:column;
+  width:100%;
+    padding-bottom:50px;
+  }
+  
+  #cardsTitle {
+    display:flex;
+    margin:auto;
+    margin-top:50px;
+    margin-bottom:30px;
+    font-family: 'Trebuchet MS', sans-serif;
+    font-size: 8vw;
+    color: var(--font-color1);
+  }
+  
+  #controlsSection {
+    display:flex;
+    justify-content: center;
+    align-items: center;
+    background: var(--controls-bg);
+    outline: solid var(--font-color1);
+  }
+  
+  #makeTeamsButton {
+    display:flex;
+    font-family: 'Trebuchet MS', sans-serif;
+    font-size: 7vw;
+    justify-content: center;
+    align-items: center;
+    margin-top: 50px;
+    color: var(--font-color1);
+    background: var(--make-teams-color);
+    padding:4vw;
+    padding-top: 5vw;
+    padding-bottom: 5vw;
+    border: solid var(--font-color1);
+    cursor:pointer;
+  }
+  
+  #pickCaliButton {
+    display:flex;
+    font-family: 'Trebuchet MS', sans-serif;
+    font-size: 7vw;
+    justify-content: center;
+    align-items: center;
+    margin-top: 40px;
+    margin-bottom: 50px;
+    color: var(--font-color1);
+    background: var(--pick-cali-color);
+    padding:4vw;
+    padding-top: 5vw;
+    padding-bottom: 5vw;
+    border: solid var(--font-color1);
+    cursor:pointer;
+  }
+  
+  #playersText {
+    font-family: 'Trebuchet MS', sans-serif;
+    font-size: 7vw;
+    color: var(--font-color1);
+    margin-right: 4vw;
+  }
+  
+  #playersTeamsText1 {
+    font-family: 'Trebuchet MS', sans-serif;
+    font-size: 7vw;
+    color: var(--hole-color);
+    -webkit-text-stroke: 6px var(--font-hole-stroke-color);
+    paint-order: stroke fill;
+    margin-right: 1vw;
+  }
+  
+  #playersTeamsText2 {
+    font-family: 'Trebuchet MS', sans-serif;
+    font-size: 6.5vw;
+    color: var(--font-color1);
+    opacity: .5;
+    margin-right: .8vw;
+  }
+  
+  #playersTeamsText3 {
+    font-family: 'Trebuchet MS', sans-serif;
+    font-size: 7vw;
+    color: var(--white);
+    -webkit-text-stroke: 6px var(--font-hole-stroke-color);
+    paint-order: stroke fill;
+  }
+  
+  #playersHeader {
+  width:100%;
+    background: var(--section-color);
+    padding-top:20px;
+    padding-bottom:20px;
+    border-top: solid var(--font-color1);
+    border-bottom: solid var(--font-color1);
+  }
+  
+  #playersList {
+    display:flex;
+    margin-top: 30px;
+    flex-direction:column;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  #entryContainer {
+    display:flex;
+    margin-top: 30px;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 30px;
+  }
+  
+  #playerInput {
+    display:flex;
+    padding: 8px;
+    width: 60%;
+    font-family: Verdana, sans-serif;
+    font-size: 5vw;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+  }
+  
+  #addPlayerButton {
+    display:flex;
+    justify-content: center;
+    align-items: center;
+    width:6vw;
+    height:6vw;
+    padding: 12px;
+    padding-top: 10px;
+    background: #2E933C;
+    margin-left: 20px;
+    outline: solid #075A12;
+    font-family: 'Trebuchet MS', sans-serif;
+    font-size: 8vw;
+    font-weight: 900;
+    color: var(--font-hole-color);
+    -webkit-text-stroke: 6px #075A12;
+    paint-order: stroke fill;
+  }
+  
+  .optionTitle {
+    display:flex;
+    justify-content: end;
+    width: 60%;
+    font-family: 'Trebuchet MS', sans-serif;
+    font-size: 6vw;
+    color: var(--font-color1);
+    opacity: .7;
+  }
+  
+  .optionInput {
+    display:flex;
+    padding: 8px;
+    font-family: Verdana, sans-serif;
+    font-size: 3vw;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+  }
+  
+  .optionEntry {
+    display:flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 4vw;
+  }
+  
+  .optionButtonActive {
+    display:flex;
+    justify-content: center;
+    align-items: center;
+    width:6vw;
+    height:6vw;
+    padding: 12px;
+    padding-top: 10px;
+    background: #26547C;
+    margin-left: 20px;
+    outline: solid #063157;
+    font-family: 'Trebuchet MS', sans-serif;
+    font-size: 7vw;
+    font-weight: 900;
+    color: var(--font-hole-color);
+    -webkit-text-stroke: 6px #063157;
+    paint-order: stroke fill;
+  }
+  
+  .optionButtonInactive {
+    display:flex;
+    justify-content: center;
+    align-items: center;
+    width:6vw;
+    height:6vw;
+    padding: 12px;
+    padding-top: 10px;
+    margin-left: 20px;
+    outline: solid #063157;
+    font-family: 'Trebuchet MS', sans-serif;
+    font-size: 7vw;
+    font-weight: 900;
+    color: var(--font-hole-color);
+    -webkit-text-stroke: 6px #063157;
+    paint-order: stroke fill;
+  }
+  
+</style>
+</head>
+<body>
+  <div id="formatSection" class="sectionHeader">
+    <div id="formatContainer">
+      <a id="formatText">format:</a>
+        <div id="formatToggle">Random</div>
+    </div>
+  </div>
+  <div id="cardsSection">
+    <a id="cardsTitle">Cards</a>
+    <div class="cardEntry">
+      <div class="holeNumber">18</div>
+      <div class="teamsEntry">
+          <div class="teamEntry1">Ben Gibbard + Julia Gibbard</div>
+          <div class="teamEntry2">Dahn Parker + Ken Goydan</div>
+        </div>
+    </div>
+    <div class="cardEntry">
+      <div class="holeNumber">3</div>
+      <div class="teamsEntry">
+          <div class="teamEntry1">Molly + Nate</div>
+          <div class="teamEntry2">Sean Bennet + Sheldon</div>
+        </div>
+    </div>
+    <div class="cardEntry">
+      <div class="holeNumber">7</div>
+      <div class="teamsEntry">
+          <div class="teamEntry1">Guy W + Guy D</div>
+          <div class="teamEntry2">Mike Schmidt-Lange + Petter Abrahamsson</div>
+        </div>
+    </div>
+  </div>
+  <div id="controlsSection">
+    <div id="controlsContainer">
+      <div id="makeTeamsButton">🥏 Make Teams</div>
+      <div id="pickCaliButton">🏌️ Pick Cali</div>
+    </div>
+  </div>
+  <div id="playersHeader">
+    <div id="formatContainer">
+        <div id="playersText">Players</div>
+        <div id="playersTeamsText1">32</div>
+        <div id="playersTeamsText2">|</div>
+        <div id="playersTeamsText3">16</div>
+    </div>
+  </div>
+  <div id="playersContainer">
+    <div id="playersList">
+      <div class="playerEntry">Sheldon Wakefield</div>
+      <div class="playerEntry">Jimmy Wyatt</div>
+      <div class="playerEntry">Tyler Keller</div>
+      <div class="playerEntry">Danny O'Brien</div>
+      <div class="playerEntry">Rob Stass</div>
+      <div class="playerEntry">Logan Keba</div>
+      <div class="playerEntry">Zack Locke</div>
+      <div class="playerEntry">Ken Goydan</div>
+      <div class="playerEntry">Joel Smith</div>
+      <div class="playerEntry">Nathan Haskell</div>
+      <div class="playerEntry">Brian Struck</div>
+      <div class="playerEntry">Sean Smith</div>
+      <div class="playerEntry">Brent Jones</div>
+      <div class="playerEntry">Dustin Sands</div>
+      <div class="playerEntry">Patrick Keller</div>
+      <div class="playerEntry">Simon Junge</div>
+      <div class="playerEntry">Bob Webb</div>
+      <div class="playerEntry">Rob Ranalli</div>
+      <div class="playerEntry">Tony Rodgers</div>
+      <div class="playerEntry">Zack Hutchison</div>
+      <div class="playerEntry">Molly Messana</div>
+      <div class="playerEntry">Jarrett Brown</div>
+      <div class="playerEntry">Dan Spivack</div>
+      <div class="playerEntry">Dhan Parker</div>
+      <div class="playerEntry">Irv Boyd</div>
+      <div class="playerEntry">Petter Abrahamsson</div>
+      <div class="playerEntry">Sean Bennett</div>
+      <div class="playerEntry">Colin Browne</div>
+      <div class="playerEntry">Connor Musser</div>
+      <div class="playerEntry">Brent Peterson</div>
+      <div class="playerEntry">Eric Carr</div>
+      <div class="playerEntry">Ben Gibbard</div>
+      <div class="playerEntry">David Araujo</div>
+      <div class="playerEntry">Jacob Eckert</div>
+      <div class="playerEntry">Mike Schmidt-Lange</div>
+      <div class="playerEntry">Matt Henn</div>
+      <div class="playerEntry">Pat Battaglia</div>
+      <div class="playerEntry">Viv Arora</div>
+      <div class="playerEntry">Jeffrey Botto</div>
+      <div class="playerEntry">Alden Spears</div>
+      <div class="playerEntry">Julia Gibbard</div>
+      <div class="playerEntry">Lee Gould</div>
+      <div class="playerEntry">Andre N</div>
+      <div class="playerEntry">Patrick Sublette</div>
+      <div class="playerEntry">Aaron C. Thornton</div>
+      <div class="playerEntry">Becky</div>
+      <div class="playerEntry">Eric Moll</div>
+      <div class="playerEntry">Guy Dela Rosa</div>
+    </div>
+  </div>
+  <div id="inputContainer">
+    <div id="entryContainer">
+      <input id="playerInput"></input>
+      <div id="addPlayerButton">+</div>
+    </div>
+    <div class="optionEntry">
+      <div class="optionTitle">A/B Pool:</div>
+      <div id="poolInput" class="optionButtonInactive">A</div>
+    </div>
+    <div class="optionEntry">
+      <div class="optionTitle">Team:</div>
+      <div id="teamInput" class="optionButtonInactive">-</div>
+    </div>
+    <div class="optionEntry">
+      <div class="optionTitle">Slow:</div>
+      <div id="teamInput" class="optionButtonInactive">N</div>
+    </div>
+  </div>
+</body>
+</html>
