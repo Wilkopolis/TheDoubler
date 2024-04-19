@@ -451,6 +451,9 @@
 
     function PickCali()
     {
+        document.getElementById('playersList').querySelectorAll(".editorContainer").forEach(function(a) {
+            a.remove()
+        });
         // get all players
         var players = [];
         var players2 = [];
@@ -506,6 +509,9 @@
 
     function MakeTeams()
     {
+        document.getElementById('playersList').querySelectorAll(".editorContainer").forEach(function(a) {
+            a.remove()
+        });
         // <a id="cardsTitle">Cards</a>
         // remove all team elements
         var teamsContainer = document.getElementById('cardsSection');
@@ -584,123 +590,123 @@
 
         if (team1s.length == 2)
         {
-                var player1 = team1s[0];
-                var player2 = team1s[1];
-                players = players.filter(function(item) {
-                    return item !== player1 && item !== player2;
-                });
+            var player1 = team1s[0];
+            var player2 = team1s[1];
+            players = players.filter(function(item) {
+                return item !== player1 && item !== player2;
+            });
 
-                var teamSpeed = 0;
-                for (var i = 0; i < SlowPlayers.length; i++)
-                {
-                    if (player1 == SlowPlayers[i])
-                        teamSpeed += 5;
-                    if (player2 == SlowPlayers[i])
-                        teamSpeed += 5;
-                }
+            var teamSpeed = 0;
+            for (var i = 0; i < SlowPlayers.length; i++)
+            {
+                if (player1 == SlowPlayers[i])
+                    teamSpeed += 5;
+                if (player2 == SlowPlayers[i])
+                    teamSpeed += 5;
+            }
 
-                var newTeam = { 
-                    teamPlayers: [player1, player2], 
-                    speed: teamSpeed
-                };
-                teams.push(newTeam);
-                teamCount--;
+            var newTeam = { 
+                teamPlayers: [player1, player2], 
+                speed: teamSpeed
+            };
+            teams.push(newTeam);
+            teamCount--;
         }
         if (team2s.length == 2)
         {
-                var player1 = team2s[0];
-                var player2 = team2s[1];
-                players = players.filter(function(item) {
-                    return item !== player1 && item !== player2;
-                });
+            var player1 = team2s[0];
+            var player2 = team2s[1];
+            players = players.filter(function(item) {
+                return item !== player1 && item !== player2;
+            });
 
-                var teamSpeed = 0;
-                for (var i = 0; i < SlowPlayers.length; i++)
-                {
-                    if (player1 == SlowPlayers[i])
-                        teamSpeed += 5;
-                    if (player2 == SlowPlayers[i])
-                        teamSpeed += 5;
-                }
+            var teamSpeed = 0;
+            for (var i = 0; i < SlowPlayers.length; i++)
+            {
+                if (player1 == SlowPlayers[i])
+                    teamSpeed += 5;
+                if (player2 == SlowPlayers[i])
+                    teamSpeed += 5;
+            }
 
-                var newTeam = { 
-                    teamPlayers: [player1, player2], 
-                    speed: teamSpeed
-                };
-                teams.push(newTeam);
-                teamCount--;
+            var newTeam = { 
+                teamPlayers: [player1, player2], 
+                speed: teamSpeed
+            };
+            teams.push(newTeam);
+            teamCount--;
         }
         if (team3s.length == 2)
         {
-                var player1 = team3s[0];
-                var player2 = team3s[1];
-                players = players.filter(function(item) {
-                    return item !== player1 && item !== player2;
-                });
+            var player1 = team3s[0];
+            var player2 = team3s[1];
+            players = players.filter(function(item) {
+                return item !== player1 && item !== player2;
+            });
 
-                var teamSpeed = 0;
-                for (var i = 0; i < SlowPlayers.length; i++)
-                {
-                    if (player1 == SlowPlayers[i])
-                        teamSpeed += 5;
-                    if (player2 == SlowPlayers[i])
-                        teamSpeed += 5;
-                }
+            var teamSpeed = 0;
+            for (var i = 0; i < SlowPlayers.length; i++)
+            {
+                if (player1 == SlowPlayers[i])
+                    teamSpeed += 5;
+                if (player2 == SlowPlayers[i])
+                    teamSpeed += 5;
+            }
 
-                var newTeam = { 
-                    teamPlayers: [player1, player2], 
-                    speed: teamSpeed
-                };
-                teams.push(newTeam);
-                teamCount--;
+            var newTeam = { 
+                teamPlayers: [player1, player2], 
+                speed: teamSpeed
+            };
+            teams.push(newTeam);
+            teamCount--;
         }
         if (team4s.length == 2)
         {
-                var player1 = team4s[0];
-                var player2 = team4s[1];
-                players = players.filter(function(item) {
-                    return item !== player1 && item !== player2;
-                });
+            var player1 = team4s[0];
+            var player2 = team4s[1];
+            players = players.filter(function(item) {
+                return item !== player1 && item !== player2;
+            });
 
-                var teamSpeed = 0;
-                for (var i = 0; i < SlowPlayers.length; i++)
-                {
-                    if (player1 == SlowPlayers[i])
-                        teamSpeed += 5;
-                    if (player2 == SlowPlayers[i])
-                        teamSpeed += 5;
-                }
+            var teamSpeed = 0;
+            for (var i = 0; i < SlowPlayers.length; i++)
+            {
+                if (player1 == SlowPlayers[i])
+                    teamSpeed += 5;
+                if (player2 == SlowPlayers[i])
+                    teamSpeed += 5;
+            }
 
-                var newTeam = { 
-                    teamPlayers: [player1, player2], 
-                    speed: teamSpeed
-                };
-                teams.push(newTeam);
-                teamCount--;
+            var newTeam = { 
+                teamPlayers: [player1, player2], 
+                speed: teamSpeed
+            };
+            teams.push(newTeam);
+            teamCount--;
         }
         if (team5s.length == 2)
         {
-                var player1 = team5s[0];
-                var player2 = team5s[1];
-                players = players.filter(function(item) {
-                    return item !== player1 && item !== player2;
-                });
+            var player1 = team5s[0];
+            var player2 = team5s[1];
+            players = players.filter(function(item) {
+                return item !== player1 && item !== player2;
+            });
 
-                var teamSpeed = 0;
-                for (var i = 0; i < SlowPlayers.length; i++)
-                {
-                    if (player1 == SlowPlayers[i])
-                        teamSpeed += 5;
-                    if (player2 == SlowPlayers[i])
-                        teamSpeed += 5;
-                }
+            var teamSpeed = 0;
+            for (var i = 0; i < SlowPlayers.length; i++)
+            {
+                if (player1 == SlowPlayers[i])
+                    teamSpeed += 5;
+                if (player2 == SlowPlayers[i])
+                    teamSpeed += 5;
+            }
 
-                var newTeam = { 
-                    teamPlayers: [player1, player2], 
-                    speed: teamSpeed
-                };
-                teams.push(newTeam);
-                teamCount--;
+            var newTeam = { 
+                teamPlayers: [player1, player2], 
+                speed: teamSpeed
+            };
+            teams.push(newTeam);
+            teamCount--;
         }
 
         var button = document.getElementById('formatToggle');
