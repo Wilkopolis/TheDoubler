@@ -557,21 +557,13 @@
             // add the team
             var newTeam = { 
                 teamPlayers: [cali], 
-                speed: 0 
+                speed: -1 
             };
             teams.push(newTeam);
             // 1 team down
             teamCount--;
             // remove from list of players
             players = players.filter(j => j != cali);
-
-            var teamSpeed = 0;
-            for (var i = 0; i < SlowPlayers.length; i++)
-            {
-                if (cali == SlowPlayers[i])
-                    teamSpeed += 5;
-            }
-            newTeam.speed = teamSpeed - 2;
         }
 
         // create hardcoded teams
@@ -758,9 +750,9 @@
             var aPool = [];
             var bPool = [];
             names.forEach(function(item) {
-                if (item.parentNode.playerData.pool == "A")
+                if (item.innerHTML != cali && item.parentNode.playerData.pool == "A")
                     aPool.push(item.innerHTML);
-                else if (item.parentNode.playerData.pool == "B")
+                else if (item.innerHTML != cali &&item.parentNode.playerData.pool == "B")
                     bPool.push(item.innerHTML);
             });
             // while we are short of teams, remove players to make teams
@@ -792,11 +784,12 @@
             }
         }
 
-
         // sort teams by slowest first
         teams.sort(function(teamA, teamB) {
             return teamB.speed - teamA.speed;
         });
+
+        var fastestTeam = teams[teams.length - 1];
 
         for (var i = 0; i < teams.length; i++)
         {
@@ -814,10 +807,27 @@
         // go down the list of team and build cards
         while (cardCount > 0)
         {
+            // create the big card
             if (cardCount == 1 && teams.length == 1)
             {
-                cards[cards.length - 1].teams.push(teams[0])
-                cards[cards.length - 1].speed += teams[0].speed + 5;
+                var lastTeam = teams[0];
+                // find and swap with the fastest team
+                for (var i = 0; i < cards.length; i++)
+                {
+                    var card = cards[i];
+                    if (card.teams[0] == fastestTeam)
+                    {
+                        card.teams[0] = lastTeam;
+                        break;
+                    }
+                    if (card.teams[1] == fastestTeam)
+                    {
+                        card.teams[1] = lastTeam;
+                        break;
+                    }
+                }
+                cards[cards.length - 1].teams.push(fastestTeam);
+                cards[cards.length - 1].speed += fastestTeam.speed + 5;
                 break;
             }
 
