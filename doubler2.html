@@ -1,15 +1,762 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="utf-8">
+<meta charset="UTF-8">
 <title>The Doubler</title>
+<script>
+
+    var CaliPlayersPicked = [];
+    var CaliPlayer = '';
+    var SlowPlayers = [];
+
+    var HoleConfig = {
+        2: [3],
+        3: [3],
+        4: [3, 18],
+        5: [3, 18],
+        6: [3, 14, 18],
+        7: [3, 14, 18],
+        8: [3, 14, 18, 6],
+        9: [3, 14, 18, 6],
+        10: [3, 14, 18, 6, 12],
+        11: [3, 14, 18, 6, 12],
+        12: [3, 14, 18, 6, 12, 8],
+        13: [3, 14, 18, 6, 12, 8],
+        14: [3, 14, 18, 6, 12, 8, 10],
+        15: [3, 14, 18, 6, 12, 8, 10],
+        16: [3, 14, 18, 6, 12, 8, 10, 16],
+        17: [3, 14, 18, 6, 12, 8, 10, 16],
+        18: [3, 14, 18, 6, 12, 8, 10, 16, 1],
+        19: [3, 14, 18, 6, 12, 8, 10, 16, 1],
+        20: [3, 14, 18, 6, 12, 8, 10, 16, 1, 7],
+        21: [3, 14, 18, 6, 12, 8, 10, 16, 1, 7],
+        22: [3, 14, 18, 6, 12, 8, 10, 16, 1, 7, 5],
+        23: [3, 14, 18, 6, 12, 8, 10, 16, 1, 7, 5],
+        24: [3, 14, 18, 6, 12, 8, 10, 16, 1, 7, 5, 13],
+        25: [3, 14, 18, 6, 12, 8, 10, 16, 1, 7, 5, 13],
+        26: [3, 14, 18, 6, 12, 8, 10, 16, 1, 7, 5, 13, 9],
+        27: [3, 14, 18, 6, 12, 8, 10, 16, 1, 7, 5, 13, 9],
+        28: [3, 14, 18, 6, 12, 8, 10, 16, 1, 7, 5, 13, 9, 15],
+        29: [3, 14, 18, 6, 12, 8, 10, 16, 1, 7, 5, 13, 9, 15],
+        30: [3, 14, 18, 6, 12, 8, 10, 16, 1, 7, 5, 13, 9, 15, 11],
+        31: [3, 14, 18, 6, 12, 8, 10, 16, 1, 7, 5, 13, 9, 15, 11],
+        32: [3, 14, 18, 6, 12, 8, 10, 16, 1, 7, 5, 13, 9, 15, 11, 4],
+        33: [3, 14, 18, 6, 12, 8, 10, 16, 1, 7, 5, 13, 9, 15, 11, 4],
+        34: [3, 14, 18, 6, 12, 8, 10, 16, 1, 7, 5, 13, 9, 15, 11, 4, 17],
+        35: [3, 14, 18, 6, 12, 8, 10, 16, 1, 7, 5, 13, 9, 15, 11, 4, 17],
+        36: [3, 14, 18, 6, 12, 8, 10, 16, 1, 7, 5, 13, 9, 15, 11, 4, 17, 2]
+    }
+
+    function getRandomInt(max) {
+        return Math.floor(Math.random() * max);
+    }
+
+    function ToggleFormat()
+    {
+        var button = document.getElementById('formatToggle');
+        if (button.innerHTML == "Random")
+        {
+            button.innerHTML = "A/B Pool";
+            button.style.background = "#8447FF";
+        }
+        else if (button.innerHTML == "A/B Pool")
+        {
+            button.innerHTML = "Random";
+            button.style.background = "#D972FF";
+        }
+    }
+
+  function TogglePoolState()
+    {
+      var button = document.getElementById('poolInput');
+        if (button.classList.contains('optionButtonInactive'))
+        {
+      button.className = 'optionButton optionButtonActive poolA';
+        }
+        else if (button.innerHTML == "A")
+        {
+          button.innerHTML = "B";
+      button.className = 'optionButton optionButtonActive poolB';
+        }
+        else if (button.innerHTML == "B")
+        {
+          button.innerHTML = "A";
+      button.className = 'optionButton optionButtonInactive';
+        }
+    }
+    
+  function ToggleTeamState()
+    {
+      var maxTeam = 5;
+      var button = document.getElementById('teamInput');
+        if (button.classList.contains('optionButtonInactive'))
+        {
+            button.innerHTML = "1";
+      button.className = 'optionButton optionButtonActive teamTag1';
+        }
+        else
+        {
+          for (var i = 1; i < maxTeam; i++)
+          {
+            if (button.innerHTML == i)
+            {
+              button.innerHTML = i + 1;
+              button.className = 'optionButton optionButtonActive teamTag' + button.innerHTML;
+              return;
+            }
+          }
+
+          if (button.innerHTML == maxTeam)
+          {
+            button.innerHTML = "-";
+            button.className = "optionButton optionButtonInactive";
+          }
+        }
+    }
+    
+  function ToggleSpeedState()
+    {
+      var button = document.getElementById('speedInput');
+        if (button.classList.contains('optionButtonInactive'))
+        {
+          button.innerHTML = "Y";
+            button.classList.add('optionButtonActive');
+            button.classList.remove('optionButtonInactive');
+        }
+        else
+        {
+          button.innerHTML = "N";
+            button.classList.add('optionButtonInactive');
+            button.classList.remove('optionButtonActive');
+        }
+    }
+
+    function AddPlayer()
+    {
+        // get player name
+        var playerName = document.getElementById('playerInput').value;
+        playerName = playerName.trim();
+
+        if (playerName == "")
+            return;
+            
+        var speedInput = document.getElementById('speedInput');
+        var teamInput = document.getElementById('teamInput');
+        var poolInput = document.getElementById('poolInput');
+
+        // get player list
+        var container = document.getElementById('playersList');
+        // create this player entry
+        var entryContainer = document.createElement('div');
+        entryContainer.className = 'playerEntry';
+        
+        var targetPool = poolInput.innerHTML;
+        if (poolInput.classList.contains('optionButtonInactive'))
+            targetPool = "-";
+
+        var teamTag = document.createElement('div');
+        teamTag.className = 'tag team';
+        teamTag.innerHTML = teamInput.innerHTML;
+        entryContainer.appendChild(teamTag);
+
+        var poolTag = document.createElement('div');
+        poolTag.className = 'tag pool';
+        poolTag.innerHTML = poolInput.innerHTML;
+        entryContainer.appendChild(poolTag);
+
+        var speedTag = document.createElement('div');
+        speedTag.className = 'slowTag';
+        speedTag.innerHTML = "S";
+        entryContainer.appendChild(speedTag);
+        
+        // create name entry
+        var nameContainer = document.createElement('div');
+        nameContainer.innerHTML = playerName;
+        nameContainer.className = 'playerEntryText';
+        entryContainer.appendChild(nameContainer);
+        container.appendChild(entryContainer);
+
+        var playerData = {
+            name: playerName,
+            team: teamInput.innerHTML,
+            pool: targetPool,
+            slow: speedInput.innerHTML,
+            element: entryContainer,
+        }
+        
+        entryContainer.onclick = function() { ToggleEditPlayer(entryContainer); };
+        entryContainer.playerData = playerData;
+
+        // clear input
+        document.getElementById('playerInput').value = "";
+
+        UpdatePlayerEntry(playerData);
+        UpdatePlayerCount();
+        
+        // reset button states
+        poolInput.innerHTML = "A";
+        if (poolInput.classList.contains('optionButtonActive'))
+        {
+            poolInput.className = 'optionButton optionButtonActive poolA';
+        }
+        speedInput.innerHTML = "N";
+        speedInput.className = "optionButton optionButtonInactive";
+        teamInput.innerHTML = "-";
+        teamInput.className = "optionButton optionButtonInactive";
+    }
+
+    function UpdatePlayerEntry(playerData)
+    {
+        var entryContainer = playerData.element;
+
+        // slow state
+        if (playerData.slow == "Y")
+        {
+            entryContainer.querySelectorAll(".slowTag").forEach(function(a) {
+                  a.style.display = "flex";
+            });
+        }
+        else
+        {
+            entryContainer.querySelectorAll(".slowTag").forEach(function(a) {
+                  a.style.display = "none";
+            });
+        }
+
+        // pool state
+        if (playerData.pool == "A")
+        {
+            entryContainer.querySelectorAll(".pool").forEach(function(a) {
+                  a.style.display = "flex";
+                  a.className = 'tag pool poolA';
+                  a.innerHTML = "A";
+            });
+        }
+        else if (playerData.pool == "B")
+        {
+            entryContainer.querySelectorAll(".pool").forEach(function(a) {
+                  a.style.display = "flex";
+                  a.className = 'tag pool poolB';
+                  a.innerHTML = "B";
+            });
+        }
+        else
+        {
+            entryContainer.querySelectorAll(".pool").forEach(function(a) {
+                  a.style.display = "none";
+            });
+        }
+
+        // team state
+        if (playerData.team == "1")
+        {
+            entryContainer.querySelectorAll(".team").forEach(function(a) {
+                  a.style.display = "flex";
+                  a.className = 'tag team teamTag1';
+                  a.innerHTML = "1";
+            });
+        }
+        else if (playerData.team == "2")
+        {
+            entryContainer.querySelectorAll(".team").forEach(function(a) {
+                  a.style.display = "flex";
+                  a.className = 'tag team teamTag2';
+                  a.innerHTML = "2";
+            });
+        }
+        else if (playerData.team == "3")
+        {
+            entryContainer.querySelectorAll(".team").forEach(function(a) {
+                  a.style.display = "flex";
+                  a.className = 'tag team teamTag3';
+                  a.innerHTML = "3";
+            });
+        }
+        else if (playerData.team == "4")
+        {
+            entryContainer.querySelectorAll(".team").forEach(function(a) {
+                  a.style.display = "flex";
+                  a.className = 'tag team teamTag4';
+                  a.innerHTML = "4";
+            });
+        }
+        else if (playerData.team == "5")
+        {
+            entryContainer.querySelectorAll(".team").forEach(function(a) {
+                  a.style.display = "flex";
+                  a.className = 'tag team teamTag5';
+                  a.innerHTML = "5";
+            });
+        }
+        else
+        {
+            entryContainer.querySelectorAll(".team").forEach(function(a) {
+                  a.style.display = "none";
+            });
+        }
+    }
+    
+    function ToggleEditPlayer(entryContainer)
+    {
+        // if editor exists, remove it
+        var nextElement = entryContainer.nextSibling;
+        if (nextElement != null && nextElement.className == 'editorContainer')
+        {
+            nextElement.remove();
+        }
+        else
+        {
+          // else make editor
+          var editorContainer = document.createElement('div');
+          editorContainer.className = 'editorContainer';
+          entryContainer.after(editorContainer);
+          
+          // add the remove button
+          var removeButton = document.createElement('div');
+          removeButton.innerHTML = 'X';
+          removeButton.style.width = "6vw";
+          removeButton.className = 'editorButton removeButton';
+          editorContainer.appendChild(removeButton);
+
+          removeButton.onclick = function() { 
+              editorContainer.remove();
+              entryContainer.remove();
+              UpdatePlayerCount();
+           };
+
+          // add the toggle team button
+          var teamButton = document.createElement('div');
+          teamButton.innerHTML = entryContainer.playerData.team;
+          teamButton.style.width = "6vw";
+          teamButton.className = 'editorButton optionButtonInactive'
+          if (entryContainer.playerData.team != '-')
+            teamButton.className = 'editorButton teamTag' + entryContainer.playerData.team
+          editorContainer.appendChild(teamButton);
+
+          teamButton.onclick = function() { 
+
+                if (entryContainer.playerData.team == "-")
+                {
+                    entryContainer.playerData.team = 1;
+                    teamButton.className = 'editorButton teamTag' + entryContainer.playerData.team;
+                    teamButton.innerHTML = "1";
+                }
+                else if (entryContainer.playerData.team == 5)
+                {
+                    entryContainer.playerData.team = "-";
+                    teamButton.className = 'editorButton optionButtonInactive';
+                    teamButton.innerHTML = "-";
+                }
+                else
+                {
+                    entryContainer.playerData.team++;
+                    teamButton.className = 'editorButton teamTag' + entryContainer.playerData.team;
+                    teamButton.innerHTML = entryContainer.playerData.team;
+                }
+
+                UpdatePlayerEntry(entryContainer.playerData);
+           };
+          
+          // add the toggle pool button
+          var currentPool = entryContainer.playerData.pool;
+          if (currentPool == "-")
+            currentPool = "A";
+          var poolButton = document.createElement('div');
+          poolButton.innerHTML = currentPool;
+          poolButton.style.width = "6vw";
+          poolButton.className = 'editorButton optionButtonInactive';
+          editorContainer.appendChild(poolButton);
+
+          poolButton.onclick = function() { 
+                // cycle pool
+                if (entryContainer.playerData.pool == "A")
+                {
+                    poolButton.innerHTML = "B";
+                    entryContainer.playerData.pool = "B";
+                    poolButton.className = 'editorButton poolB';
+                }
+                else if (entryContainer.playerData.pool == "B")
+                {
+                    poolButton.innerHTML = "-";
+                    entryContainer.playerData.pool = "-";
+                    poolButton.className = 'editorButton optionButtonInactive';
+                }
+                else if (entryContainer.playerData.pool == "-")
+                {
+                    poolButton.innerHTML = "A";
+                    entryContainer.playerData.pool = "A";
+                    poolButton.className = 'editorButton poolA';
+                }
+
+                UpdatePlayerEntry(entryContainer.playerData);
+           };
+          
+          // add the toggle slow button
+          var slowStatus = entryContainer.playerData.slow;
+          var slowButton = document.createElement('div');
+          slowButton.innerHTML = "Slow";
+          if (slowStatus == "N")
+            slowButton.className = 'editorButton fast';
+          else
+            slowButton.className = 'editorButton slow';
+          slowButton.style.paddingLeft = "2vw";
+          slowButton.style.paddingRight = "2vw";
+          editorContainer.appendChild(slowButton);
+
+          slowButton.onclick = function() { 
+              // toggle slow
+              if (slowButton.className == "editorButton fast")
+              {
+                slowButton.className = 'editorButton slow';
+                var nameEntry = entryContainer.querySelector(".playerEntryText");
+
+                var tag = document.createElement('div');
+                tag.className = 'slowTag';
+                tag.innerHTML = "S";
+                nameEntry.before(tag);
+
+              }
+              else
+              {
+                slowButton.className = 'editorButton fast';
+                entryContainer.querySelectorAll(".slowTag").forEach(function(a) {
+                  a.remove()
+                });
+              }
+           };
+        }
+    }
+
+    function UpdatePlayerCount()
+    {
+        var players = [];
+        var playerList = document.getElementById('playersList');
+        var names = playersList.querySelectorAll('.playerEntryText');
+        names.forEach((item) => players.push(item.innerHTML));
+
+        var playerCount = players.length;        
+        var teamCount = Math.round(players.length / 2);
+
+        document.getElementById('playersTeamsText1').innerHTML = playerCount;
+        document.getElementById('playersTeamsText3').innerHTML = teamCount;
+    }
+
+    function PickCali()
+    {
+        // get all players
+        var players = [];
+        var playerList = document.getElementById('playersList');
+        var names = playersList.querySelectorAll('.playerEntryText');
+
+        var button = document.getElementById('formatToggle');
+        if (button.innerHTML == "Random")
+        {
+            names.forEach((item) => players.push(item.innerHTML));
+        }
+        else
+        {
+            names.forEach((item) => players.push(item.innerHTML.parentNode.playerData.pool == "A"));
+        }
+
+        // remove previous calis
+        for (var i = 0; i < CaliPlayersPicked.length; i++)
+        {
+            players = players.filter(j => j != CaliPlayersPicked[i]);
+        }
+
+        if (players.length == 0)
+        {
+            CaliPlayersPicked = [];
+            names.forEach((item) => players.push(item.innerHTML));
+            console.log("no takers, reseting");
+        }
+
+        // pick a random player
+        var index = getRandomInt(players.length);
+        var candidate = players[index];
+        CaliPlayer = candidate;
+
+        // save off player
+        CaliPlayersPicked.push(candidate);
+
+        // populate cali element
+        playersList.querySelectorAll('.playerEntryText').forEach(function(a) {
+            a.parentNode.classList.remove('cali');
+        });
+        playerList.children[index].classList.add('cali');
+    }
+
+    function MakeTeams()
+    {
+        // <a id="cardsTitle">Cards</a>
+        // remove all team elements
+        var teamsContainer = document.getElementById('cardsSection');
+        cardsSection.style.display = 'flex';
+        teamsContainer.innerHTML = '';
+
+        // add the title
+        var titleCard = document.createElement('div');
+        titleCard.id = 'cardsTitle';
+        titleCard.innerHTML = 'Cards';
+        teamsContainer.appendChild(titleCard);
+
+        // calculate team amount
+        var players = [];
+        var playerList = document.getElementById('playersList');
+        var names = playersList.querySelectorAll('.playerEntryText');
+        names.forEach((item) => players.push(item.innerHTML));
+
+        var teamCount = Math.round(players.length / 2);
+        var cardCount = Math.round(teamCount / 2);
+
+        // get the list of holes based on player amount
+        var holeConfig = HoleConfig[teamCount];
+
+        var teams = [];
+        // remove cali and make them team 1
+        var cali = CaliPlayer;
+        if (cali != '')
+        {
+            // add the team
+            var newTeam = { 
+                teamPlayers: [cali], 
+                speed: 0 
+            };
+            teams.push(newTeam);
+            // 1 team down
+            teamCount--;
+            // remove from list of players
+            players = players.filter(j => j != cali);
+        }
+
+        var button = document.getElementById('formatToggle');
+        if (button.innerHTML == "Random")
+        {
+            // while we are short of teams, remove players to make teams
+            while (teamCount > 0)
+            {
+                var p1Index = getRandomInt(players.length);
+                var player1 = players[p1Index];
+                players.splice(p1Index, 1);
+                var p2Index = getRandomInt(players.length);
+                var player2 = players[p2Index];
+                players.splice(p2Index, 1);
+
+                var teamSpeed = 0;
+
+                for (var i = 0; i < SlowPlayers.length; i++)
+                {
+                    if (player1 == SlowPlayers[i])
+                        teamSpeed += 5;
+                    if (player2 == SlowPlayers[i])
+                        teamSpeed += 5;
+                }
+
+                var newTeam = { 
+                    teamPlayers: [player1, player2], 
+                    speed: teamSpeed
+                };
+                teams.push(newTeam);
+                teamCount--;
+            }
+        }
+        else
+        {
+            var aPool = [];
+            var bPool = [];
+            names.forEach((item) => aPool.push(item.innerHTML.parentNode.playerData.pool == "A"));
+            names.forEach((item) => bPool.push(item.innerHTML.parentNode.playerData.pool == "B"));
+            // while we are short of teams, remove players to make teams
+            while (teamCount > 0)
+            {
+                var p1Index = getRandomInt(aPool.length);
+                var player1 = aPool[p1Index];
+                aPool.splice(p1Index, 1);
+                var p2Index = getRandomInt(bPool.length);
+                var player2 = bPool[p2Index];
+                bPool.splice(p2Index, 1);
+
+                var teamSpeed = 0;
+
+                for (var i = 0; i < SlowPlayers.length; i++)
+                {
+                    if (player1 == SlowPlayers[i])
+                        teamSpeed += 5;
+                    if (player2 == SlowPlayers[i])
+                        teamSpeed += 5;
+                }
+
+                var newTeam = { 
+                    teamPlayers: [player1, player2], 
+                    speed: teamSpeed
+                };
+                teams.push(newTeam);
+                teamCount--;
+            }
+        }
+
+
+        // sort teams by slowest first
+        teams.sort(function(teamA, teamB) {
+            return teamB.speed - teamA.speed;
+        });
+
+        for (var i = 0; i < teams.length; i++)
+        {
+            var team = teams[i];
+            var debugString = "players: ";
+            for (var j = 0; j < team.teamPlayers.length; j++)
+            {
+                debugString += team.teamPlayers[j] + ", ";
+            }
+            debugString += "speed: " + team.speed;
+        }
+
+        // build cards and distribute slow play
+        var cards = [];
+        // go down the list of team and build cards
+        while (cardCount > 0)
+        {
+            if (cardCount == 1 && teams.length == 1)
+            {
+                cards[cards.length - 1].teams.push(teams[0])
+                cards[cards.length - 1].speed += teams[0].speed;
+                break;
+            }
+
+            var p1Index = getRandomInt(teams.length);
+            var team1 = teams[p1Index];
+            teams.splice(p1Index, 1);
+            var p2Index = getRandomInt(teams.length);
+            var team2 = teams[p2Index];
+            teams.splice(p2Index, 1);
+
+            var cardSpeed = team1.speed + team2.speed;
+
+            var card = { 
+                teams: [team1, team2], 
+                speed: cardSpeed
+            };
+            cards.push(card);
+            cardCount--;
+        }
+
+        cards.sort(function(cardA, cardB) {
+            return cardB.speed - cardA.speed;
+        });
+
+        // assign teams to holes
+        for (var i = 0; i < holeConfig.length; i++)
+        {
+            cards[i].hole = holeConfig[i];
+        }
+
+        // print it to results
+        for (var i = 0; i < cards.length; i++)
+        {
+            var card = cards[i];
+            var debugString = "cards: hole " + card.hole + " team 1 ";
+            for (var j = 0; j < card.teams[0].teamPlayers.length; j++)
+            {
+                debugString += card.teams[0].teamPlayers[j] + ", ";
+            }
+            debugString += "team 2 ";
+            for (var j = 0; j < card.teams[1].teamPlayers.length; j++)
+            {
+                debugString += card.teams[1].teamPlayers[j] + ", ";
+            }
+            debugString += " speed: " + card.speed;
+            //console.log(debugString);
+        }
+
+        // <div class="cardEntry">
+        //   <div class="holeNumber">18</div>
+        //   <div class="teamsEntry">
+        //       <div class="teamEntry1">Ben Gibbard + Julia Gibbard</div>
+        //       <div class="teamEntry2">Dahn Parker + Ken Goydan</div>
+        //     </div>
+        // </div>
+        // <div class="cardEntry">
+        //   <div class="holeNumber">3</div>
+        //   <div class="teamsEntry">
+        //       <div class="teamEntry1">Molly + Nate</div>
+        //       <div class="teamEntry2">Sean Bennet + Sheldon</div>
+        //     </div>
+        // </div>
+        // <div class="cardEntry">
+        //   <div class="holeNumber">7</div>
+        //   <div class="teamsEntry">
+        //       <div class="teamEntry1">Guy W + Guy D</div>
+        //       <div class="teamEntry2">Mike Schmidt-Lange + Petter Abrahamsson</div>
+        //     </div>
+        // </div>
+        for (var i = 0; i < cards.length; i++)
+        {
+            var card = cards[i];
+
+            var container1 = document.createElement('div');
+            container1.className = 'cardEntry';
+            teamsContainer.appendChild(container1);
+
+            var holeNumber = document.createElement('div');
+            holeNumber.className = 'holeNumber';
+            holeNumber.innerHTML = card.hole;
+            container1.appendChild(holeNumber);
+
+            var localTeamContainer = document.createElement('div');
+            localTeamContainer.className = 'teamsEntry';
+            container1.appendChild(localTeamContainer);
+
+            var teamsContainer1 = document.createElement('div');
+            teamsContainer1.className = 'teamEntry1';
+            var team = card.teams[0].teamPlayers[0] + ' + ' + card.teams[0].teamPlayers[1];
+            if (card.teams[0].teamPlayers[0] == null)
+                team = card.teams[0].teamPlayers[1];
+            if (card.teams[0].teamPlayers[1] == null)
+                team = card.teams[0].teamPlayers[0];
+            teamsContainer1.innerHTML = team;
+            localTeamContainer.appendChild(teamsContainer1);
+
+            var teamsContainer2 = document.createElement('div');
+            teamsContainer2.className = 'teamEntry2';
+            var team = card.teams[1].teamPlayers[0] + ' + ' + card.teams[1].teamPlayers[1];
+            if (card.teams[1].teamPlayers[0] == null)
+                team = card.teams[1].teamPlayers[1];
+            if (card.teams[1].teamPlayers[1] == null)
+                team = card.teams[1].teamPlayers[0];
+            teamsContainer2.innerHTML = team;
+            localTeamContainer.appendChild(teamsContainer2);
+
+            // rare 3rd team
+            if (card.teams.length == 3)
+            {
+                var teamsContainerTeam3 = document.createElement('div');
+                teamsContainerTeam3.className = 'teamEntry3';
+                var team = card.teams[2].teamPlayers[0] + ' + ' + card.teams[2].teamPlayers[1];
+                if (card.teams[2].teamPlayers[0] == null)
+                    team = card.teams[2].teamPlayers[1];
+                if (card.teams[2].teamPlayers[1] == null)
+                    team = card.teams[2].teamPlayers[0];
+                teamsContainerTeam3.innerHTML = team;
+                localTeamContainer.appendChild(teamsContainerTeam3);
+            }
+        }
+
+        // reset cali
+        CaliPlayer = '';
+        playersList.querySelectorAll('.playerEntryText').forEach(function(a) {
+            a.parentNode.classList.remove('cali');
+        });
+    }
+    
+</script>
 <style>
 
   :root {
     --white: #FEF9EF;
     --bg-color: #F5F1ED;
     --section-color: #ECE0D2;
-    --random-color: #FFC100;
+    --random-color: #D972FF;
     --controls-bg: #342E37;
     --hole-color: #E97300;
     --hole-stroke-color: #2f2317;
@@ -93,16 +840,109 @@
     border-top: none;
   }
   
-  .playerEntry {
+  .teamEntry3 {
     display:flex;
     padding: 8px;
-    width: 80%;
+    width: 100%;
     font-family: Verdana, sans-serif;
     font-size: 3vw;
+    background: var(--team1-color);
+    border: 2px solid var(--team1-border);
+    border-top: none;
+  }
+  
+  .playerEntry {
+    display:flex;
+    flex-direction:row-reverse;
+    padding: 12px;
+    width: 80%;
     background: var(--team2-color);
     outline: 2px solid var(--team1-border);
   }
  
+  .playerEntryText {
+    font-family: Verdana, sans-serif;
+    font-size: 5vw;
+    color: var(--font-color1);
+  }
+  
+  .slowTag {
+    display:flex;
+    justify-content: center;
+    align-items: center;
+    width:3vw;
+    height:3vw;
+    padding: 12px;
+    padding-top: 12px;
+    margin-left: 20px;
+    outline: solid #903131;
+    font-family: 'Trebuchet MS', sans-serif;
+    font-size: 4vw;
+    font-weight: 900;
+    color: var(--font-hole-color);
+    -webkit-text-stroke: 6px #903131;
+    paint-order: stroke fill;
+  }
+
+  .slow {
+    outline: solid var(--font-color1);
+    color: var(--font-hole-color);
+    background: #AC1726;
+    -webkit-text-stroke: 6px var(--font-color1);
+  }
+
+  .fast {
+    outline: solid var(--font-color1);
+    color: var(--font-hole-color);
+    -webkit-text-stroke: 6px var(--font-color1);
+    opacity: .5;
+  }
+  
+  .tag {
+    display:flex;
+    justify-content: center;
+    align-items: center;
+    width:3vw;
+    height:3vw;
+    padding: 12px;
+    padding-top: 12px;
+    margin-left: 20px;
+    font-family: 'Trebuchet MS', sans-serif;
+    font-size: 4vw;
+    font-weight: 900;
+    color: var(--font-hole-color);
+    paint-order: stroke fill;
+  }
+  
+  .editorContainer {
+    display:flex;
+    width:81%;
+    flex-direction:row-reverse;
+    padding-top: 12px;
+    padding-bottom: 18px;
+  }
+  
+  .editorButton {
+    display:flex;
+    justify-content: center;
+    align-items: center;
+    height:6vw;
+    padding: 12px;
+    padding-top: 12px;
+    margin-left: 20px;
+    font-family: 'Trebuchet MS', sans-serif;
+    font-size: 6vw;
+    font-weight: 900;
+    color: var(--font-hole-color);
+    paint-order: stroke fill;
+  }
+  
+  .removeButton {
+    background: #9E2B25;
+    outline: solid #4C0F0C;
+    -webkit-text-stroke: 6px #4C0F0C;
+  }
+    
   #formatContainer {
     display:flex;
     width:fit-content;
@@ -133,7 +973,7 @@
   }
   
   #cardsSection {
-    display:flex;
+    display:none;
     flex-direction:column;
   width:100%;
     padding-bottom:50px;
@@ -304,41 +1144,77 @@
     margin-bottom: 4vw;
   }
   
-  .optionButtonActive {
+  .optionButton {
     display:flex;
     justify-content: center;
     align-items: center;
     width:6vw;
     height:6vw;
     padding: 12px;
-    padding-top: 10px;
-    background: #26547C;
+    padding-top: 12px;
     margin-left: 20px;
-    outline: solid #063157;
     font-family: 'Trebuchet MS', sans-serif;
     font-size: 7vw;
     font-weight: 900;
     color: var(--font-hole-color);
-    -webkit-text-stroke: 6px #063157;
     paint-order: stroke fill;
+  }
+
+  .optionButtonActive {
+    background: #26547C;
+    outline: solid #063157;
+    -webkit-text-stroke: 6px #063157;
   }
   
   .optionButtonInactive {
-    display:flex;
-    justify-content: center;
-    align-items: center;
-    width:6vw;
-    height:6vw;
-    padding: 12px;
-    padding-top: 10px;
-    margin-left: 20px;
     outline: solid #063157;
-    font-family: 'Trebuchet MS', sans-serif;
-    font-size: 7vw;
-    font-weight: 900;
-    color: var(--font-hole-color);
     -webkit-text-stroke: 6px #063157;
-    paint-order: stroke fill;
+  }
+  
+  .cali {
+    background: var(--pick-cali-color);
+  }
+  
+  .teamTag1 {
+    background: #EF86BC;
+    outline: solid #9E346A;
+    -webkit-text-stroke: 6px #9E346A;
+  }
+  
+  .teamTag2 {
+    background: #A29ED9;
+    outline: solid #494676;
+    -webkit-text-stroke: 6px #494676;
+  }
+  
+  .teamTag3 {
+    background: #8F6593;
+    outline: solid #4F3152;
+    -webkit-text-stroke: 6px #4F3152;
+  }
+  
+  .teamTag4 {
+    background: #B87A7A;
+    outline: solid #714242;
+    -webkit-text-stroke: 6px #714242;
+  }
+  
+  .teamTag5 {
+    background: #C9725C;
+    outline: solid #502419;
+    -webkit-text-stroke: 6px #502419;
+  }
+  
+  .poolA {
+    background: #3454d1;
+    outline: solid #223686;
+    -webkit-text-stroke: 6px #223686;
+  }
+  
+  .poolB {
+    background: #243B9A;
+    outline: solid #182868;
+    -webkit-text-stroke: 6px #182868;
   }
   
 </style>
@@ -347,115 +1223,45 @@
   <div id="formatSection" class="sectionHeader">
     <div id="formatContainer">
       <a id="formatText">format:</a>
-        <div id="formatToggle">Random</div>
+        <div id="formatToggle" onclick="ToggleFormat()">Random</div>
     </div>
   </div>
   <div id="cardsSection">
-    <a id="cardsTitle">Cards</a>
-    <div class="cardEntry">
-      <div class="holeNumber">18</div>
-      <div class="teamsEntry">
-          <div class="teamEntry1">Ben Gibbard + Julia Gibbard</div>
-          <div class="teamEntry2">Dahn Parker + Ken Goydan</div>
-        </div>
-    </div>
-    <div class="cardEntry">
-      <div class="holeNumber">3</div>
-      <div class="teamsEntry">
-          <div class="teamEntry1">Molly + Nate</div>
-          <div class="teamEntry2">Sean Bennet + Sheldon</div>
-        </div>
-    </div>
-    <div class="cardEntry">
-      <div class="holeNumber">7</div>
-      <div class="teamsEntry">
-          <div class="teamEntry1">Guy W + Guy D</div>
-          <div class="teamEntry2">Mike Schmidt-Lange + Petter Abrahamsson</div>
-        </div>
-    </div>
   </div>
   <div id="controlsSection">
     <div id="controlsContainer">
-      <div id="makeTeamsButton">🥏 Make Teams</div>
-      <div id="pickCaliButton">🏌️ Pick Cali</div>
+      <div id="makeTeamsButton" onclick="MakeTeams()">🥏 Make Teams</div>
+      <div id="pickCaliButton" onclick="PickCali()">🏌️ Pick Cali</div>
     </div>
   </div>
   <div id="playersHeader">
     <div id="formatContainer">
         <div id="playersText">Players</div>
-        <div id="playersTeamsText1">32</div>
+        <div id="playersTeamsText1">0</div>
         <div id="playersTeamsText2">|</div>
-        <div id="playersTeamsText3">16</div>
+        <div id="playersTeamsText3">0</div>
     </div>
   </div>
   <div id="playersContainer">
     <div id="playersList">
-      <div class="playerEntry">Sheldon Wakefield</div>
-      <div class="playerEntry">Jimmy Wyatt</div>
-      <div class="playerEntry">Tyler Keller</div>
-      <div class="playerEntry">Danny O'Brien</div>
-      <div class="playerEntry">Rob Stass</div>
-      <div class="playerEntry">Logan Keba</div>
-      <div class="playerEntry">Zack Locke</div>
-      <div class="playerEntry">Ken Goydan</div>
-      <div class="playerEntry">Joel Smith</div>
-      <div class="playerEntry">Nathan Haskell</div>
-      <div class="playerEntry">Brian Struck</div>
-      <div class="playerEntry">Sean Smith</div>
-      <div class="playerEntry">Brent Jones</div>
-      <div class="playerEntry">Dustin Sands</div>
-      <div class="playerEntry">Patrick Keller</div>
-      <div class="playerEntry">Simon Junge</div>
-      <div class="playerEntry">Bob Webb</div>
-      <div class="playerEntry">Rob Ranalli</div>
-      <div class="playerEntry">Tony Rodgers</div>
-      <div class="playerEntry">Zack Hutchison</div>
-      <div class="playerEntry">Molly Messana</div>
-      <div class="playerEntry">Jarrett Brown</div>
-      <div class="playerEntry">Dan Spivack</div>
-      <div class="playerEntry">Dhan Parker</div>
-      <div class="playerEntry">Irv Boyd</div>
-      <div class="playerEntry">Petter Abrahamsson</div>
-      <div class="playerEntry">Sean Bennett</div>
-      <div class="playerEntry">Colin Browne</div>
-      <div class="playerEntry">Connor Musser</div>
-      <div class="playerEntry">Brent Peterson</div>
-      <div class="playerEntry">Eric Carr</div>
-      <div class="playerEntry">Ben Gibbard</div>
-      <div class="playerEntry">David Araujo</div>
-      <div class="playerEntry">Jacob Eckert</div>
-      <div class="playerEntry">Mike Schmidt-Lange</div>
-      <div class="playerEntry">Matt Henn</div>
-      <div class="playerEntry">Pat Battaglia</div>
-      <div class="playerEntry">Viv Arora</div>
-      <div class="playerEntry">Jeffrey Botto</div>
-      <div class="playerEntry">Alden Spears</div>
-      <div class="playerEntry">Julia Gibbard</div>
-      <div class="playerEntry">Lee Gould</div>
-      <div class="playerEntry">Andre N</div>
-      <div class="playerEntry">Patrick Sublette</div>
-      <div class="playerEntry">Aaron C. Thornton</div>
-      <div class="playerEntry">Becky</div>
-      <div class="playerEntry">Eric Moll</div>
-      <div class="playerEntry">Guy Dela Rosa</div>
     </div>
   </div>
   <div id="inputContainer">
     <div id="entryContainer">
-      <input id="playerInput"></input>
-      <div id="addPlayerButton">+</div>
+        <input id="playerInput"></input>
+      <div id="addPlayerButton" onclick="AddPlayer()">+</div>
     </div>
     <div class="optionEntry">
       <div class="optionTitle">A/B Pool:</div>
-      <div id="poolInput" class="optionButtonInactive">A</div>
+      <div id="poolInput" class="optionButton optionButtonInactive" onclick="TogglePoolState()">A</div>
     </div>
     <div class="optionEntry">
       <div class="optionTitle">Team:</div>
-      <div id="teamInput" class="optionButtonInactive">-</div>
+      <div id="teamInput" class="optionButton optionButtonInactive" onclick="ToggleTeamState()">-</div>
     </div>
     <div class="optionEntry">
       <div class="optionTitle">Slow:</div>
-      <div id="teamInput" class="optionButtonInactive">N</div>
+      <div id="speedInput" class="optionButton optionButtonInactive" onclick="ToggleSpeedState()">N</div>
     </div>
   </div>
 </body>
