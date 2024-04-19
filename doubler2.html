@@ -294,6 +294,14 @@
                   a.style.display = "none";
             });
         }
+
+        SlowPlayers = [];
+        var playerList = document.getElementById('playersList');
+        var names = playersList.querySelectorAll('.playerEntryText');
+        names.forEach(function(item) {
+            if (item.parentNode.playerData.slow == "Y")
+                SlowPlayers.push(item.innerHTML);
+        });
     }
     
     function ToggleEditPlayer(entryContainer)
@@ -420,7 +428,7 @@
               {
                 slowButton.className = 'editorButton fast';
                 entryContainer.querySelectorAll(".slowTag").forEach(function(a) {
-                  a.remove()
+                    a.remove()
                 });
               }
            };
@@ -455,7 +463,10 @@
         }
         else
         {
-            names.forEach((item) => players.push(item.innerHTML.parentNode.playerData.pool == "A"));
+            names.forEach(function(item) {
+                if (item.parentNode.playerData.pool == "A")
+                    players.push(item.innerHTML);
+            });
         }
 
         // remove previous calis
@@ -529,6 +540,159 @@
             players = players.filter(j => j != cali);
         }
 
+        // create hardcoded teams
+        var team1s = [];
+        names.forEach(function(item) {
+            if (item.parentNode.playerData.team == 1)
+                team1s.push(item.innerHTML);
+        });
+        var team2s = [];
+        names.forEach(function(item) {
+            if (item.parentNode.playerData.team == 2)
+                team2s.push(item.innerHTML);
+        });
+        var team3s = [];
+        names.forEach(function(item) {
+            if (item.parentNode.playerData.team == 3)
+                team3s.push(item.innerHTML);
+        });
+        var team4s = [];
+        names.forEach(function(item) {
+            if (item.parentNode.playerData.team == 4)
+                team4s.push(item.innerHTML);
+        });
+        var team5s = [];
+        names.forEach(function(item) {
+            if (item.parentNode.playerData.team == 5)
+                team5s.push(item.innerHTML);
+        });
+
+        if (team1s.length == 2)
+        {
+                var player1 = team1s[0];
+                var player2 = team1s[1];
+                players = players.filter(function(item) {
+                    return item !== player1 && item !== player2;
+                });
+
+                var teamSpeed = 0;
+
+                for (var i = 0; i < SlowPlayers.length; i++)
+                {
+                    if (player1 == SlowPlayers[i])
+                        teamSpeed += 5;
+                    if (player2 == SlowPlayers[i])
+                        teamSpeed += 5;
+                }
+
+                var newTeam = { 
+                    teamPlayers: [player1, player2], 
+                    speed: teamSpeed
+                };
+                teams.push(newTeam);
+                teamCount--;
+        }
+        if (team2s.length == 2)
+        {
+                var player1 = team2s[0];
+                var player2 = team2s[1];
+                players = players.filter(function(item) {
+                    return item !== player1 && item !== player2;
+                });
+
+                var teamSpeed = 0;
+
+                for (var i = 0; i < SlowPlayers.length; i++)
+                {
+                    if (player1 == SlowPlayers[i])
+                        teamSpeed += 5;
+                    if (player2 == SlowPlayers[i])
+                        teamSpeed += 5;
+                }
+
+                var newTeam = { 
+                    teamPlayers: [player1, player2], 
+                    speed: teamSpeed
+                };
+                teams.push(newTeam);
+                teamCount--;
+        }
+        if (team3s.length == 2)
+        {
+                var player1 = team3s[0];
+                var player2 = team3s[1];
+                players = players.filter(function(item) {
+                    return item !== player1 && item !== player2;
+                });
+
+                var teamSpeed = 0;
+
+                for (var i = 0; i < SlowPlayers.length; i++)
+                {
+                    if (player1 == SlowPlayers[i])
+                        teamSpeed += 5;
+                    if (player2 == SlowPlayers[i])
+                        teamSpeed += 5;
+                }
+
+                var newTeam = { 
+                    teamPlayers: [player1, player2], 
+                    speed: teamSpeed
+                };
+                teams.push(newTeam);
+                teamCount--;
+        }
+        if (team4s.length == 2)
+        {
+                var player1 = team4s[0];
+                var player2 = team4s[1];
+                players = players.filter(function(item) {
+                    return item !== player1 && item !== player2;
+                });
+
+                var teamSpeed = 0;
+
+                for (var i = 0; i < SlowPlayers.length; i++)
+                {
+                    if (player1 == SlowPlayers[i])
+                        teamSpeed += 5;
+                    if (player2 == SlowPlayers[i])
+                        teamSpeed += 5;
+                }
+
+                var newTeam = { 
+                    teamPlayers: [player1, player2], 
+                    speed: teamSpeed
+                };
+                teams.push(newTeam);
+                teamCount--;
+        }
+        if (team5s.length == 2)
+        {
+                var player1 = team5s[0];
+                var player2 = team5s[1];
+                players = players.filter(function(item) {
+                    return item !== player1 && item !== player2;
+                });
+
+                var teamSpeed = 0;
+
+                for (var i = 0; i < SlowPlayers.length; i++)
+                {
+                    if (player1 == SlowPlayers[i])
+                        teamSpeed += 5;
+                    if (player2 == SlowPlayers[i])
+                        teamSpeed += 5;
+                }
+
+                var newTeam = { 
+                    teamPlayers: [player1, player2], 
+                    speed: teamSpeed
+                };
+                teams.push(newTeam);
+                teamCount--;
+        }
+
         var button = document.getElementById('formatToggle');
         if (button.innerHTML == "Random")
         {
@@ -564,8 +728,12 @@
         {
             var aPool = [];
             var bPool = [];
-            names.forEach((item) => aPool.push(item.innerHTML.parentNode.playerData.pool == "A"));
-            names.forEach((item) => bPool.push(item.innerHTML.parentNode.playerData.pool == "B"));
+            names.forEach(function(item) {
+                if (item.parentNode.playerData.pool == "A")
+                    aPool.push(item.innerHTML);
+                else if (item.parentNode.playerData.pool == "B")
+                    bPool.push(item.innerHTML);
+            });
             // while we are short of teams, remove players to make teams
             while (teamCount > 0)
             {
