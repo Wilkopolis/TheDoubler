@@ -5,6 +5,17 @@
 <title>The Doubler</title>
 <script>
 
+    window.onload = (event) => {
+        document.getElementById('playerInput').addEventListener("keypress", function(event) {
+            // If the user presses the "Enter" key on the keyboard
+            if (event.key === "Enter") {
+                // Cancel the default action, if needed
+                event.preventDefault();
+                AddPlayer();
+            }
+        }); 
+    };
+
     var CaliPlayersPicked = [];
     var CaliPlayer = '';
     var SlowPlayers = [];
@@ -203,6 +214,8 @@
         speedInput.className = "optionButton optionButtonInactive";
         teamInput.innerHTML = "-";
         teamInput.className = "optionButton optionButtonInactive";
+
+        document.getElementById('playerInput').focus();
     }
 
     function UpdatePlayerEntry(playerData)
