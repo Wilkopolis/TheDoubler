@@ -453,6 +453,7 @@
     {
         // get all players
         var players = [];
+        var players2 = [];
         var playerList = document.getElementById('playersList');
         var names = playersList.querySelectorAll('.playerEntryText');
 
@@ -460,12 +461,17 @@
         if (button.innerHTML == "Random")
         {
             names.forEach((item) => players.push(item.innerHTML));
+            names.forEach((item) => players2.push(item.innerHTML));
         }
         else
         {
             names.forEach(function(item) {
                 if (item.parentNode.playerData.pool == "A")
                     players.push(item.innerHTML);
+            });
+            names.forEach(function(item) {
+                if (item.parentNode.playerData.pool == "A")
+                    players2.push(item.innerHTML);
             });
         }
 
@@ -486,6 +492,7 @@
         var index = getRandomInt(players.length);
         var candidate = players[index];
         CaliPlayer = candidate;
+        index = players2.indexOf(CaliPlayer);
 
         // save off player
         CaliPlayersPicked.push(candidate);
@@ -538,6 +545,14 @@
             teamCount--;
             // remove from list of players
             players = players.filter(j => j != cali);
+
+            var teamSpeed = 0;
+            for (var i = 0; i < SlowPlayers.length; i++)
+            {
+                if (cali == SlowPlayers[i])
+                    teamSpeed += 5;
+            }
+            newTeam.speed = teamSpeed - 2;
         }
 
         // create hardcoded teams
@@ -576,7 +591,6 @@
                 });
 
                 var teamSpeed = 0;
-
                 for (var i = 0; i < SlowPlayers.length; i++)
                 {
                     if (player1 == SlowPlayers[i])
@@ -601,7 +615,6 @@
                 });
 
                 var teamSpeed = 0;
-
                 for (var i = 0; i < SlowPlayers.length; i++)
                 {
                     if (player1 == SlowPlayers[i])
@@ -626,7 +639,6 @@
                 });
 
                 var teamSpeed = 0;
-
                 for (var i = 0; i < SlowPlayers.length; i++)
                 {
                     if (player1 == SlowPlayers[i])
@@ -651,7 +663,6 @@
                 });
 
                 var teamSpeed = 0;
-
                 for (var i = 0; i < SlowPlayers.length; i++)
                 {
                     if (player1 == SlowPlayers[i])
@@ -676,7 +687,6 @@
                 });
 
                 var teamSpeed = 0;
-
                 for (var i = 0; i < SlowPlayers.length; i++)
                 {
                     if (player1 == SlowPlayers[i])
@@ -788,7 +798,7 @@
             if (cardCount == 1 && teams.length == 1)
             {
                 cards[cards.length - 1].teams.push(teams[0])
-                cards[cards.length - 1].speed += teams[0].speed;
+                cards[cards.length - 1].speed += teams[0].speed + 5;
                 break;
             }
 
