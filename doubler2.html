@@ -125,18 +125,18 @@
         }
     }
     
-  function ToggleSpeedState()
+    function ToggleSpeedState()
     {
-      var button = document.getElementById('speedInput');
+        var button = document.getElementById('speedInput');
         if (button.classList.contains('optionButtonInactive'))
         {
-          button.innerHTML = "Y";
+            button.innerHTML = "Y";
             button.classList.add('optionButtonActive');
             button.classList.remove('optionButtonInactive');
         }
         else
         {
-          button.innerHTML = "N";
+            button.innerHTML = "N";
             button.classList.add('optionButtonInactive');
             button.classList.remove('optionButtonActive');
         }
@@ -905,10 +905,17 @@
             container1.className = 'cardEntry';
             teamsContainer.appendChild(container1);
 
-            var holeNumber = document.createElement('div');
+            let holeNumber = document.createElement('div');
             holeNumber.className = 'holeNumber';
             holeNumber.innerHTML = card.hole;
             container1.appendChild(holeNumber);
+
+            holeNumber.onclick = function() { 
+                if (holeNumber.classList.contains('holeNumber2'))
+                    holeNumber.classList.remove('holeNumber2');
+                else
+                    holeNumber.classList.add('holeNumber2');
+            };
 
             var localTeamContainer = document.createElement('div');
             localTeamContainer.className = 'teamsEntry';
@@ -1011,6 +1018,13 @@
     -webkit-text-stroke: 1vw var(--font-hole-stroke-color);
     paint-order: stroke fill;
     border-radius:15px;
+  } 
+  
+  .holeNumber2 {
+    background: var(--font-hole-color);
+    outline: .6vw solid var(--hole-stroke-color);
+    color: var(--hole-color);
+    -webkit-text-stroke: 1vw var(--font-hole-stroke-color);
   }
   
   .cardEntry {
