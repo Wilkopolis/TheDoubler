@@ -1,15 +1,3 @@
-<!--
-
-    ToDo
-
-    - When adding player, sort by tag number
-    - add sort alphabetical
-    - When adding player, adjust tag color by rank (1-20 gold, 20-40 silder, 50-70 cyan)
-    - When adding player, adjust tag number font size so it fits always (triple digits)
-    - Update card creation logic
-
--->
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -34,23 +22,23 @@
 
     var HoleConfig = {
         1: [3],
-        2: [3, 18],
-        3: [3, 14, 18],
-        4: [3, 14, 18, 6],
-        5: [3, 14, 18, 6, 12],
-        6: [3, 14, 18, 6, 12, 8],
-        7: [3, 14, 18, 6, 12, 8, 10],
-        8: [3, 14, 18, 6, 12, 8, 10, 16],
-        9: [3, 14, 18, 6, 12, 8, 10, 16, 1],
-        10: [3, 14, 18, 6, 12, 8, 10, 16, 1, 7],
-        11: [3, 14, 18, 6, 12, 8, 10, 16, 1, 7, 5],
-        12: [3, 14, 18, 6, 12, 8, 10, 16, 1, 7, 5, 13],
-        13: [3, 14, 18, 6, 12, 8, 10, 16, 1, 7, 5, 13, 9],
-        14: [3, 14, 18, 6, 12, 8, 10, 16, 1, 7, 5, 13, 9, 15],
-        15: [3, 14, 18, 6, 12, 8, 10, 16, 1, 7, 5, 13, 9, 15, 11],
-        16: [3, 14, 18, 6, 12, 8, 10, 16, 1, 7, 5, 13, 9, 15, 11, 4],
-        17: [3, 14, 18, 6, 12, 8, 10, 16, 1, 7, 5, 13, 9, 15, 11, 4, 17],
-        18: [3, 14, 18, 6, 12, 8, 10, 16, 1, 7, 5, 13, 9, 15, 11, 4, 17, 2]
+        2: [18, 3],
+        3: [18, 3, 14],
+        4: [18, 3, 14, 6],
+        5: [18, 3, 14, 6, 12],
+        6: [18, 3, 14, 6, 12, 8],
+        7: [18, 1, 3, 6, 12, 8, 10],
+        8: [18, 1, 3, 6, 12, 8, 10, 16],
+        9: [18, 1, 3, 6, 12, 8, 10, 16, 14],
+        10: [18, 1, 3, 6, 12, 8, 10, 16, 14, 7],
+        11: [18, 1, 3, 6, 12, 8, 10, 16, 14, 7, 5],
+        12: [18, 1, 3, 6, 12, 8, 10, 16, 14, 7, 5, 13],
+        13: [18, 1, 3, 6, 12, 8, 10, 16, 14, 7, 5, 13, 9],
+        14: [18, 1, 3, 6, 12, 8, 10, 16, 14, 7, 5, 13, 9, 15],
+        15: [18, 1, 3, 6, 12, 8, 10, 16, 14, 7, 5, 13, 9, 15, 11],
+        16: [18, 1, 3, 6, 12, 8, 10, 16, 14, 7, 5, 13, 9, 15, 11, 4],
+        17: [18, 1, 3, 6, 12, 8, 10, 16, 14, 7, 5, 13, 9, 15, 11, 4, 17],
+        18: [18, 1, 3, 6, 12, 8, 10, 16, 14, 7, 5, 13, 9, 15, 11, 4, 17, 2]
     }
 
     function getRandomInt(max) {
@@ -133,7 +121,7 @@
         var playerName = playerInput.replace(/[0-9]/g, '');
         playerName = playerName.trim();
 
-        if (playerName == "" || numberInput == "")
+        if (playerName == "" || numberInput == null)
             return;
             
         var teamInput = document.getElementById('teamInput');
@@ -144,6 +132,8 @@
         // create this player entry
         var entryContainer = document.createElement('div');
         entryContainer.className = 'playerEntryContainer';
+        entryContainer.tagNumber = numberInput;
+        entryContainer.playerName = playerName;
         
         var targetHole = startInput.innerHTML;
         if (startInput.classList.contains('optionButtonInactive'))
@@ -172,8 +162,31 @@
         // create tag entry
         var tagEntry = document.createElement('div');
         tagEntry.innerHTML = numberInput;
-        tagEntry.className = 'tagNumber goldTag';
+        tagEntry.className = 'tagNumber';
         entryContainer.appendChild(tagEntry);
+
+        if (numberInput == 1)
+            tagEntry.className += ' blackTag'
+        else if (numberInput <= 20)
+            tagEntry.className += ' goldTag'
+        else if (numberInput <= 40)
+            tagEntry.className += ' silverTag'
+        else if (numberInput <= 60)
+            tagEntry.className += ' cyanTag'
+        else if (numberInput <= 80)
+            tagEntry.className += ' rustTag'
+        else if (numberInput <= 100)
+            tagEntry.className += ' blueTag'
+        else if (numberInput <= 120)
+            tagEntry.className += ' copperTag'
+        else if (numberInput <= 140)
+            tagEntry.className += ' blueishSilverTag'
+        else if (numberInput <= 160)
+            tagEntry.className += ' magentaTag'
+        else if (numberInput <= 180)
+            tagEntry.className += ' greenTag'
+        else
+            tagEntry.className += ' copperMagentaTag'
 
         if (parseInt(numberInput) < 10)
             tagEntry.className += ' tagSingle'
@@ -201,6 +214,8 @@
 
         UpdatePlayerEntry(playerData);
         UpdatePlayerCount();
+
+        SortPlayersByTag();
         
         // reset button states
         startInput.innerHTML = "-";
@@ -212,6 +227,27 @@
         teamInput.className = "optionButton optionButtonInactive";
 
         document.getElementById('playerInput').focus();
+    }
+
+    function SortPlayersByTag()
+    {
+        // get all player entries
+        var container = document.getElementById('playersList');
+
+        var items = container.childNodes;
+        var itemsArr = [];
+        for (var i in items) {
+            if (items[i].nodeType == 1)
+                itemsArr.push(items[i]);
+        }
+
+        itemsArr.sort(function(a, b) {
+            return parseInt(a.tagNumber) > parseInt(b.tagNumber) ? 1 : -1;
+        });
+
+        for (i = 0; i < itemsArr.length; ++i) {
+            container.appendChild(itemsArr[i]);
+        }
     }
 
     function UpdatePlayerEntry(playerData)
@@ -397,7 +433,7 @@
         names.forEach((item) => players.push(item.innerHTML));
 
         var playerCount = players.length;        
-        var teamCount = Math.round(players.length / 4);
+        var teamCount = Math.ceil(players.length / 4);
 
         document.getElementById('playersTeamsText1').innerHTML = playerCount;
         document.getElementById('playersTeamsText3').innerHTML = teamCount;
@@ -421,318 +457,67 @@
 
         // calculate team amount
         var players = [];
-        var playerList = document.getElementById('playersList');
-        var names = playersList.querySelectorAll('.playerEntryText');
-        names.forEach((item) => players.push(item.innerHTML));
+        var playerList = document.getElementById('playersList').childNodes;
+        for(var field in playerList)
+        {
+            var element = playerList[field];
+            // child
+            if (element.nodeType == 1)
+            {
+                var playerEntry = {};
+                playerEntry.Tag = element.tagNumber[0];
+                playerEntry.Name = element.playerName;
+                players.push(playerEntry);
+            }
+        }
 
-        var teamCount = Math.round(players.length / 2);
-        var cardCount = Math.round(teamCount / 2);
+        var cardCount = Math.ceil(players.length / 4);
 
         // get the list of holes based on player amount
-        var holeConfig = HoleConfig[teamCount];
-
-        var teams = [];
-        // remove cali and make them team 1
-        var cali = CaliPlayer;
-        if (cali != '')
-        {
-            // add the team
-            var newTeam = { 
-                teamPlayers: [cali], 
-                speed: -1 
-            };
-            teams.push(newTeam);
-            // 1 team down
-            teamCount--;
-            // remove from list of players
-            players = players.filter(j => j != cali);
-        }
-
-        // create hardcoded teams
-        var team1s = [];
-        names.forEach(function(item) {
-            if (item.parentNode.playerData.team == 1)
-                team1s.push(item.innerHTML);
-        });
-        var team2s = [];
-        names.forEach(function(item) {
-            if (item.parentNode.playerData.team == 2)
-                team2s.push(item.innerHTML);
-        });
-        var team3s = [];
-        names.forEach(function(item) {
-            if (item.parentNode.playerData.team == 3)
-                team3s.push(item.innerHTML);
-        });
-        var team4s = [];
-        names.forEach(function(item) {
-            if (item.parentNode.playerData.team == 4)
-                team4s.push(item.innerHTML);
-        });
-        var team5s = [];
-        names.forEach(function(item) {
-            if (item.parentNode.playerData.team == 5)
-                team5s.push(item.innerHTML);
-        });
-
-        if (team1s.length == 2)
-        {
-            var player1 = team1s[0];
-            var player2 = team1s[1];
-            players = players.filter(function(item) {
-                return item !== player1 && item !== player2;
-            });
-
-            var teamSpeed = 0;
-            for (var i = 0; i < SlowPlayers.length; i++)
-            {
-                if (player1 == SlowPlayers[i])
-                    teamSpeed += 5;
-                if (player2 == SlowPlayers[i])
-                    teamSpeed += 5;
-            }
-
-            var newTeam = { 
-                teamPlayers: [player1, player2], 
-                speed: teamSpeed
-            };
-            teams.push(newTeam);
-            teamCount--;
-        }
-        if (team2s.length == 2)
-        {
-            var player1 = team2s[0];
-            var player2 = team2s[1];
-            players = players.filter(function(item) {
-                return item !== player1 && item !== player2;
-            });
-
-            var teamSpeed = 0;
-            for (var i = 0; i < SlowPlayers.length; i++)
-            {
-                if (player1 == SlowPlayers[i])
-                    teamSpeed += 5;
-                if (player2 == SlowPlayers[i])
-                    teamSpeed += 5;
-            }
-
-            var newTeam = { 
-                teamPlayers: [player1, player2], 
-                speed: teamSpeed
-            };
-            teams.push(newTeam);
-            teamCount--;
-        }
-        if (team3s.length == 2)
-        {
-            var player1 = team3s[0];
-            var player2 = team3s[1];
-            players = players.filter(function(item) {
-                return item !== player1 && item !== player2;
-            });
-
-            var teamSpeed = 0;
-            for (var i = 0; i < SlowPlayers.length; i++)
-            {
-                if (player1 == SlowPlayers[i])
-                    teamSpeed += 5;
-                if (player2 == SlowPlayers[i])
-                    teamSpeed += 5;
-            }
-
-            var newTeam = { 
-                teamPlayers: [player1, player2], 
-                speed: teamSpeed
-            };
-            teams.push(newTeam);
-            teamCount--;
-        }
-        if (team4s.length == 2)
-        {
-            var player1 = team4s[0];
-            var player2 = team4s[1];
-            players = players.filter(function(item) {
-                return item !== player1 && item !== player2;
-            });
-
-            var teamSpeed = 0;
-            for (var i = 0; i < SlowPlayers.length; i++)
-            {
-                if (player1 == SlowPlayers[i])
-                    teamSpeed += 5;
-                if (player2 == SlowPlayers[i])
-                    teamSpeed += 5;
-            }
-
-            var newTeam = { 
-                teamPlayers: [player1, player2], 
-                speed: teamSpeed
-            };
-            teams.push(newTeam);
-            teamCount--;
-        }
-        if (team5s.length == 2)
-        {
-            var player1 = team5s[0];
-            var player2 = team5s[1];
-            players = players.filter(function(item) {
-                return item !== player1 && item !== player2;
-            });
-
-            var teamSpeed = 0;
-            for (var i = 0; i < SlowPlayers.length; i++)
-            {
-                if (player1 == SlowPlayers[i])
-                    teamSpeed += 5;
-                if (player2 == SlowPlayers[i])
-                    teamSpeed += 5;
-            }
-
-            var newTeam = { 
-                teamPlayers: [player1, player2], 
-                speed: teamSpeed
-            };
-            teams.push(newTeam);
-            teamCount--;
-        }
-
-        var button = document.getElementById('formatToggle');
-        if (button.innerHTML == "Random")
-        {
-            // while we are short of teams, remove players to make teams
-            while (teamCount > 0)
-            {
-                var p1Index = getRandomInt(players.length);
-                var player1 = players[p1Index];
-                players.splice(p1Index, 1);
-                var p2Index = getRandomInt(players.length);
-                var player2 = players[p2Index];
-                players.splice(p2Index, 1);
-
-                var teamSpeed = 0;
-
-                for (var i = 0; i < SlowPlayers.length; i++)
-                {
-                    if (player1 == SlowPlayers[i])
-                        teamSpeed += 5;
-                    if (player2 == SlowPlayers[i])
-                        teamSpeed += 5;
-                }
-
-                var newTeam = { 
-                    teamPlayers: [player1, player2], 
-                    speed: teamSpeed
-                };
-                teams.push(newTeam);
-                teamCount--;
-            }
-        }
-        else
-        {
-            var aPool = [];
-            var bPool = [];
-            names.forEach(function(item) {
-                if (item.innerHTML != cali && item.parentNode.playerData.pool == "A")
-                    aPool.push(item.innerHTML);
-                else if (item.innerHTML != cali &&item.parentNode.playerData.pool == "B")
-                    bPool.push(item.innerHTML);
-            });
-            // while we are short of teams, remove players to make teams
-            while (teamCount > 0)
-            {
-                var p1Index = getRandomInt(aPool.length);
-                var player1 = aPool[p1Index];
-                aPool.splice(p1Index, 1);
-                var p2Index = getRandomInt(bPool.length);
-                var player2 = bPool[p2Index];
-                bPool.splice(p2Index, 1);
-
-                var teamSpeed = 0;
-
-                for (var i = 0; i < SlowPlayers.length; i++)
-                {
-                    if (player1 == SlowPlayers[i])
-                        teamSpeed += 5;
-                    if (player2 == SlowPlayers[i])
-                        teamSpeed += 5;
-                }
-
-                var newTeam = { 
-                    teamPlayers: [player1, player2], 
-                    speed: teamSpeed
-                };
-                teams.push(newTeam);
-                teamCount--;
-            }
-        }
-
-        // sort teams by slowest first
-        teams.sort(function(teamA, teamB) {
-            return teamB.speed - teamA.speed;
-        });
-
-        var fastestTeam = teams[teams.length - 1];
-
-        for (var i = 0; i < teams.length; i++)
-        {
-            var team = teams[i];
-            var debugString = "players: ";
-            for (var j = 0; j < team.teamPlayers.length; j++)
-            {
-                debugString += team.teamPlayers[j] + ", ";
-            }
-            debugString += "speed: " + team.speed;
-        }
+        var holeConfig = HoleConfig[cardCount];
 
         // build cards and distribute slow play
         var cards = [];
+        var currentCard = [];
         // go down the list of team and build cards
-        while (cardCount > 0)
+        while (players.length > 0)
         {
-            // create the big card
-            if (cardCount == 1 && teams.length == 1)
+            playerEntry = players.shift();
+            currentCard.push(playerEntry);
+
+            if (currentCard.length == 4)
             {
-                var lastTeam = teams[0];
-                // find and swap with the fastest team
-                for (var i = 0; i < cards.length; i++)
-                {
-                    var card = cards[i];
-                    if (card.teams[0] == fastestTeam)
-                    {
-                        card.teams[0] = lastTeam;
-                        break;
-                    }
-                    if (card.teams[1] == fastestTeam)
-                    {
-                        card.teams[1] = lastTeam;
-                        break;
-                    }
-                }
-                cards[cards.length - 1].teams.push(fastestTeam);
-                cards[cards.length - 1].speed += fastestTeam.speed + 5;
-                break;
+                cards.push(currentCard);
+                currentCard = [];
             }
-
-            var p1Index = getRandomInt(teams.length);
-            var team1 = teams[p1Index];
-            teams.splice(p1Index, 1);
-            var p2Index = getRandomInt(teams.length);
-            var team2 = teams[p2Index];
-            teams.splice(p2Index, 1);
-
-            var cardSpeed = team1.speed + team2.speed;
-
-            var card = { 
-                teams: [team1, team2], 
-                speed: cardSpeed
-            };
-            cards.push(card);
-            cardCount--;
         }
 
-        cards.sort(function(cardA, cardB) {
-            return cardB.speed - cardA.speed;
-        });
+        if (currentCard.length == 1)
+        {
+            // make two other 3-sums
+            var doner1 = cards[cards.length - 1].pop();
+            var doner2 = cards[cards.length - 1].pop();
+
+            currentCard.unshift(doner2);
+            currentCard.unshift(doner1);
+
+            var doner3 = cards[cards.length - 2].pop();
+
+            cards[cards.length - 1].unshift(doner3);
+
+            cards.push(currentCard);
+        }
+        else if (currentCard.length == 2)
+        {
+            var doner1 = cards[cards.length - 1].pop();
+            currentCard.unshift(doner1);
+
+            cards.push(currentCard);
+        }
+        else if (currentCard.length == 3)
+        {
+            cards.push(currentCard);
+        }
 
         // assign teams to holes
         for (var i = 0; i < holeConfig.length; i++)
@@ -741,22 +526,22 @@
         }
 
         // print it to results
-        for (var i = 0; i < cards.length; i++)
-        {
-            var card = cards[i];
-            var debugString = "cards: hole " + card.hole + " team 1 ";
-            for (var j = 0; j < card.teams[0].teamPlayers.length; j++)
-            {
-                debugString += card.teams[0].teamPlayers[j] + ", ";
-            }
-            debugString += "team 2 ";
-            for (var j = 0; j < card.teams[1].teamPlayers.length; j++)
-            {
-                debugString += card.teams[1].teamPlayers[j] + ", ";
-            }
-            debugString += " speed: " + card.speed;
-            //console.log(debugString);
-        }
+        // for (var i = 0; i < cards.length; i++)
+        // {
+        //     var card = cards[i];
+        //     var debugString = "cards: hole " + card.hole + " team 1 ";
+        //     for (var j = 0; j < card.teams[0].teamPlayers.length; j++)
+        //     {
+        //         debugString += card.teams[0].teamPlayers[j] + ", ";
+        //     }
+        //     debugString += "team 2 ";
+        //     for (var j = 0; j < card.teams[1].teamPlayers.length; j++)
+        //     {
+        //         debugString += card.teams[1].teamPlayers[j] + ", ";
+        //     }
+        //     debugString += " speed: " + card.speed;
+        //     //console.log(debugString);
+        // }
 
         // <div class="cardEntry">
         //   <div class="holeNumber">18</div>
@@ -805,44 +590,27 @@
 
             var teamsContainer1 = document.createElement('div');
             teamsContainer1.className = 'teamEntry1';
-            var team = card.teams[0].teamPlayers[0] + ' + ' + card.teams[0].teamPlayers[1];
-            if (card.teams[0].teamPlayers[0] == null)
-                team = card.teams[0].teamPlayers[1];
-            if (card.teams[0].teamPlayers[1] == null)
-                team = card.teams[0].teamPlayers[0];
-            teamsContainer1.innerHTML = team;
+            teamsContainer1.innerHTML = card[0].Name;
             localTeamContainer.appendChild(teamsContainer1);
 
             var teamsContainer2 = document.createElement('div');
             teamsContainer2.className = 'teamEntry2';
-            var team = card.teams[1].teamPlayers[0] + ' + ' + card.teams[1].teamPlayers[1];
-            if (card.teams[1].teamPlayers[0] == null)
-                team = card.teams[1].teamPlayers[1];
-            if (card.teams[1].teamPlayers[1] == null)
-                team = card.teams[1].teamPlayers[0];
-            teamsContainer2.innerHTML = team;
+            teamsContainer2.innerHTML = card[1].Name;
             localTeamContainer.appendChild(teamsContainer2);
 
-            // rare 3rd team
-            if (card.teams.length == 3)
+            var teamsContainer3 = document.createElement('div');
+            teamsContainer3.className = 'teamEntry3';
+            teamsContainer3.innerHTML = card[2].Name;
+            localTeamContainer.appendChild(teamsContainer3);
+
+            if (card.length == 4)
             {
-                var teamsContainerTeam3 = document.createElement('div');
-                teamsContainerTeam3.className = 'teamEntry3';
-                var team = card.teams[2].teamPlayers[0] + ' + ' + card.teams[2].teamPlayers[1];
-                if (card.teams[2].teamPlayers[0] == null)
-                    team = card.teams[2].teamPlayers[1];
-                if (card.teams[2].teamPlayers[1] == null)
-                    team = card.teams[2].teamPlayers[0];
-                teamsContainerTeam3.innerHTML = team;
-                localTeamContainer.appendChild(teamsContainerTeam3);
+                var teamsContainer4 = document.createElement('div');
+                teamsContainer4.className = 'teamEntry4';
+                teamsContainer4.innerHTML = card[3].Name;
+                localTeamContainer.appendChild(teamsContainer4);
             }
         }
-
-        // reset cali
-        CaliPlayer = '';
-        playersList.querySelectorAll('.playerEntryText').forEach(function(a) {
-            a.parentNode.classList.remove('cali');
-        });
     }
     
 </script>
@@ -954,6 +722,17 @@
     border-top: none;
   }
   
+  .teamEntry4 {
+    display:flex;
+    padding: 8px;
+    width: 100%;
+    font-family: Verdana, sans-serif;
+    font-size: 3vw;
+    background: var(--team2-color);
+    border: 2px solid var(--team1-border);
+    border-top: none;
+  }
+  
   .playerEntry {
     display:flex;
     flex-direction:row-reverse;
@@ -1022,6 +801,62 @@
     -webkit-text-stroke: 6px #464309;
   }
   
+  .blackTag {
+    background: #1e1d1a;
+    outline: solid #514a4a;
+    -webkit-text-stroke: 6px #515049;
+  }
+  .goldTag {
+    background: #d1b834;
+    outline: solid #6a650e;
+    -webkit-text-stroke: 6px #464309;
+  }
+  .silverTag {
+    background: #abb3b1;
+    outline: solid #545a5e;
+    -webkit-text-stroke: 6px #4c4d55;
+  }
+  .cyanTag {
+    background: #1a91ac;
+    outline: solid #0e5d6a;
+    -webkit-text-stroke: 6px #093546;
+  }
+  .rustTag {
+    background: #c6482b;
+    outline: solid #6a310e;
+    -webkit-text-stroke: 6px #462609;
+  }
+  .blueTag {
+    background: #234eb5;
+    outline: solid #0e326a;
+    -webkit-text-stroke: 6px #0b0946;
+  }
+  .copperTag {
+    background: #d16f34;
+    outline: solid #6a310e;
+    -webkit-text-stroke: 6px #461709;
+  }
+  .blueishSilverTag {
+    background: #7d96c6;
+    outline: solid #3f4c60;
+    -webkit-text-stroke: 6px #303c48;
+  }
+  .magentaTag {
+    background: #c650d0;
+    outline: solid #4d0e6a;
+    -webkit-text-stroke: 6px #390946;
+  }
+  .greenTag {
+    background: #2a9340;
+    outline: solid #1e5323;
+    -webkit-text-stroke: 6px #1b372a;
+  }
+  .copperMagentaTag {
+    background: #cc527a;
+    outline: solid #6a0e0e;
+    -webkit-text-stroke: 6px #460909;
+  }
+
   .editorContainer {
     display:flex;
     width:81%;
