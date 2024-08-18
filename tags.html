@@ -223,7 +223,7 @@
         }
 
         itemsArr.sort(function(a, b) {
-            return parseInt(a.tagNumber) > parseInt(b.tagNumber) ? 1 : -1;
+            return parseInt(a.playerData.tag) > parseInt(b.playerData.tag) ? 1 : -1;
         });
 
         for (i = 0; i < itemsArr.length; ++i) {
