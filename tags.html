@@ -93,23 +93,6 @@
             }
         }
     }
-    
-    function ToggleSpeedState()
-    {
-        var button = document.getElementById('speedInput');
-        if (button.classList.contains('optionButtonInactive'))
-        {
-            button.innerHTML = "Y";
-            button.classList.add('optionButtonActive');
-            button.classList.remove('optionButtonInactive');
-        }
-        else
-        {
-            button.innerHTML = "N";
-            button.classList.add('optionButtonInactive');
-            button.classList.remove('optionButtonActive');
-        }
-    }
 
     function AddPlayer()
     {
@@ -132,8 +115,6 @@
         // create this player entry
         var entryContainer = document.createElement('div');
         entryContainer.className = 'playerEntryContainer';
-        entryContainer.tagNumber = numberInput;
-        entryContainer.playerName = playerName;
         
         var targetHole = startInput.innerHTML;
         if (startInput.classList.contains('optionButtonInactive'))
@@ -356,12 +337,12 @@
                 UpdatePlayerCount();
             };
 
-            // add the toggle team button
+            // add the toggle hole button
             var teamButton = document.createElement('div');
-            teamButton.innerHTML = entryContainer.playerData.team;
+            teamButton.innerHTML = entryContainer.playerData.hole;
             teamButton.style.width = "6vw";
             teamButton.className = 'editorButton optionButtonInactive'
-            if (entryContainer.playerData.team != '-')
+            if (entryContainer.playerData.hole != '-')
                 teamButton.className = 'editorButton teamTag' + entryContainer.playerData.team
             editorContainer.appendChild(teamButton);
 
@@ -446,8 +427,8 @@
         });
         // remove all team elements
         var teamsContainer = document.getElementById('cardsSection');
-        cardsSection.style.display = 'flex';
         teamsContainer.innerHTML = '';
+        cardsSection.style.display = 'flex';
 
         // add the title
         var titleCard = document.createElement('div');
@@ -464,10 +445,7 @@
             // child
             if (element.nodeType == 1)
             {
-                var playerEntry = {};
-                playerEntry.Tag = element.tagNumber[0];
-                playerEntry.Name = element.playerName;
-                players.push(playerEntry);
+                players.push(element.playerData);
             }
         }
 
@@ -477,8 +455,48 @@
         var holeConfig = HoleConfig[cardCount];
 
         // build cards and distribute slow play
-        var cards = [];
+        var cards = {};
+
+        // assign teams to holes
+        for (var i = 0; i < holeConfig.length; i++)
+        {
+            cards[holeConfig[i]] = [];
+        }
+
+        // assign any requested holes
+        // for (var i = 0; i < cards.length; i++)
+        // {
+        //     var card = cards[i];
+        //     card.hole = 
+        //     for (var j = 0; j < card.length; j++)
+        //     {
+        //         var playerData = card[j];
+        //         if (playerData.hole == "3")
+        //             card.hole = "3";
+        //         else if (playerData.hole == "18")
+        //             card.hole = "18";
+
+        //         if (card.hole != "")
+        //         {
+
+        //         }
+        //     }
+        // }
+        var i = 0;
+        while (i < players.length)
+        {
+            var player = players[i];
+            if (player.hole != "-")
+            {
+                cards[player.hole].push(player);
+                players.splice(i, 1)
+            }
+            else
+                i++;
+        }
+
         var currentCard = [];
+        var holeIndex = 0;
         // go down the list of team and build cards
         while (players.length > 0)
         {
@@ -487,7 +505,8 @@
 
             if (currentCard.length == 4)
             {
-                cards.push(currentCard);
+                cards[holeConfig[holeIndex]].push(currentCard);
+                holeIndex++;
                 currentCard = [];
             }
         }
@@ -495,35 +514,30 @@
         if (currentCard.length == 1)
         {
             // make two other 3-sums
-            var doner1 = cards[cards.length - 1].pop();
-            var doner2 = cards[cards.length - 1].pop();
+            var doner1 = cards[holeConfig[holeIndex - 1]][0].pop();
+            var doner2 = cards[holeConfig[holeIndex - 1]][0].pop();
 
             currentCard.unshift(doner2);
             currentCard.unshift(doner1);
 
-            var doner3 = cards[cards.length - 2].pop();
+            var doner3 = cards[holeConfig[holeIndex - 2]][0].pop();
 
-            cards[cards.length - 1].unshift(doner3);
+            cards[holeConfig[holeIndex - 1]][0].unshift(doner3);
 
-            cards.push(currentCard);
+            cards[holeConfig[holeIndex]].push(currentCard);
         }
         else if (currentCard.length == 2)
         {
-            var doner1 = cards[cards.length - 1].pop();
+            var doner1 = cards[holeConfig[holeIndex - 1]][0].pop();
             currentCard.unshift(doner1);
 
-            cards.push(currentCard);
+            cards[holeConfig[holeIndex++]].push(currentCard);
         }
         else if (currentCard.length == 3)
         {
-            cards.push(currentCard);
+            cards[holeConfig[holeIndex++]].push(currentCard);
         }
 
-        // assign teams to holes
-        for (var i = 0; i < holeConfig.length; i++)
-        {
-            cards[i].hole = holeConfig[i];
-        }
 
         // print it to results
         // for (var i = 0; i < cards.length; i++)
@@ -564,9 +578,12 @@
         //       <div class="teamEntry2">Mike Schmidt-Lange + Petter Abrahamsson</div>
         //     </div>
         // </div>
-        for (var i = 0; i < cards.length; i++)
+        for (var i = 0; i < holeConfig.length; i++)
         {
-            var card = cards[i];
+            var card = cards[holeConfig[i]];
+
+            if (card.length == 0 || card[0].length == 0)
+                continue;
 
             var container1 = document.createElement('div');
             container1.className = 'cardEntry';
@@ -574,7 +591,7 @@
 
             let holeNumber = document.createElement('div');
             holeNumber.className = 'holeNumber';
-            holeNumber.innerHTML = card.hole;
+            holeNumber.innerHTML = holeConfig[i];
             container1.appendChild(holeNumber);
 
             holeNumber.onclick = function() { 
@@ -590,24 +607,24 @@
 
             var teamsContainer1 = document.createElement('div');
             teamsContainer1.className = 'teamEntry1';
-            teamsContainer1.innerHTML = card[0].Name;
+            teamsContainer1.innerHTML = card[0][0].name;
             localTeamContainer.appendChild(teamsContainer1);
 
             var teamsContainer2 = document.createElement('div');
             teamsContainer2.className = 'teamEntry2';
-            teamsContainer2.innerHTML = card[1].Name;
+            teamsContainer2.innerHTML = card[0][1].name;
             localTeamContainer.appendChild(teamsContainer2);
 
             var teamsContainer3 = document.createElement('div');
             teamsContainer3.className = 'teamEntry3';
-            teamsContainer3.innerHTML = card[2].Name;
+            teamsContainer3.innerHTML = card[0][2].name;
             localTeamContainer.appendChild(teamsContainer3);
 
-            if (card.length == 4)
+            if (card[0].length == 4)
             {
                 var teamsContainer4 = document.createElement('div');
                 teamsContainer4.className = 'teamEntry4';
-                teamsContainer4.innerHTML = card[3].Name;
+                teamsContainer4.innerHTML = card[0][3].name;
                 localTeamContainer.appendChild(teamsContainer4);
             }
         }
@@ -916,10 +933,23 @@
   }
   
   #cardsSection {
-    display:none;
     flex-direction:column;
-  width:100%;
+    width:100%;
     padding-bottom:50px;
+  }
+
+  .OldTag {
+    margin-left: 60px;
+    margin-top: -20px;
+    font-family: 'Verdana', sans-serif;
+    font-size: 2vw;
+    color: var(--font-color1);
+  }
+  .OldTagNum {
+    margin-left: 20px;
+    font-family: 'Verdana', sans-serif;
+    font-size: 2vw;
+    color: var(--font-color1);
   }
   
   #cardsTitle {
@@ -1149,6 +1179,234 @@
 </head>
 <body>
   <div id="cardsSection">
+    <div id="lastTags">
+        <div class="OldTagNum">125</div><div class="OldTag">Adam Batansky</div>
+        <div class="OldTagNum">51</div><div class="OldTag">Adam Jimenez</div>
+        <div class="OldTagNum">73</div><div class="OldTag">Adam Podlaski</div>
+        <div class="OldTagNum">2</div><div class="OldTag">Adriene Khon</div>
+        <div class="OldTagNum">98</div><div class="OldTag">Alden Spears</div>
+        <div class="OldTagNum">160</div><div class="OldTag">Alden Zove</div>
+        <div class="OldTagNum">43</div><div class="OldTag">Alex Abel</div>
+        <div class="OldTagNum">12</div><div class="OldTag">Alex Caldwell</div>
+        <div class="OldTagNum">14</div><div class="OldTag">Alex Yost</div>
+        <div class="OldTagNum">7</div><div class="OldTag">Allan Burleigh</div>
+        <div class="OldTagNum">113</div><div class="OldTag">Amanda Montera</div>
+        <div class="OldTagNum">100</div><div class="OldTag">Ambrose Colliluori</div>
+        <div class="OldTagNum">166</div><div class="OldTag">Andrew Tomczak</div>
+        <div class="OldTagNum">46</div><div class="OldTag">Andy Cho</div>
+        <div class="OldTagNum">48</div><div class="OldTag">Andy Noga</div>
+        <div class="OldTagNum">36</div><div class="OldTag">Anthony Byrnes</div>
+        <div class="OldTagNum">22</div><div class="OldTag">Austin Tarpey</div>
+        <div class="OldTagNum">140</div><div class="OldTag">Ben Breish</div>
+        <div class="OldTagNum">84</div><div class="OldTag">Ben Gibbard</div>
+        <div class="OldTagNum">96</div><div class="OldTag">Ben Graham</div>
+        <div class="OldTagNum">164</div><div class="OldTag">Bill Purvis</div>
+        <div class="OldTagNum">52</div><div class="OldTag">Bob Blunt</div>
+        <div class="OldTagNum">67</div><div class="OldTag">Bob Webb</div>
+        <div class="OldTagNum">34</div><div class="OldTag">Brad Faber</div>
+        <div class="OldTagNum">77</div><div class="OldTag">Brandon Boscia</div>
+        <div class="OldTagNum">173</div><div class="OldTag">Brandon Schiff</div>
+        <div class="OldTagNum">145</div><div class="OldTag">Brandon Wright</div>
+        <div class="OldTagNum">61</div><div class="OldTag">Brent Jones</div>
+        <div class="OldTagNum">135</div><div class="OldTag">Brent Petersen</div>
+        <div class="OldTagNum">97</div><div class="OldTag">Brian Donohue</div>
+        <div class="OldTagNum">148</div><div class="OldTag">Brian Gallagher</div>
+        <div class="OldTagNum">18</div><div class="OldTag">Caleb Hoff</div>
+        <div class="OldTagNum">146</div><div class="OldTag">Carl Henninger</div>
+        <div class="OldTagNum">162</div><div class="OldTag">Carlos Gonzalez</div>
+        <div class="OldTagNum">25</div><div class="OldTag">Chris Heckman</div>
+        <div class="OldTagNum">100</div><div class="OldTag">Chris Tye</div>
+        <div class="OldTagNum">5</div><div class="OldTag">Chris Villa</div>
+        <div class="OldTagNum">20</div><div class="OldTag">Chris Young</div>
+        <div class="OldTagNum">115</div><div class="OldTag">Connor Musser</div>
+        <div class="OldTagNum">27</div><div class="OldTag">Corey Neel</div>
+        <div class="OldTagNum">100</div><div class="OldTag">Curtis Toews</div>
+        <div class="OldTagNum">100</div><div class="OldTag">Dale Fox</div>
+        <div class="OldTagNum">111</div><div class="OldTag">Dan Bennett</div>
+        <div class="OldTagNum">120</div><div class="OldTag">Dan Kolesar</div>
+        <div class="OldTagNum">4</div><div class="OldTag">Dan O'Brien</div>
+        <div class="OldTagNum">100</div><div class="OldTag">Dan Pancoast</div>
+        <div class="OldTagNum">100</div><div class="OldTag">Dan Schaak</div>
+        <div class="OldTagNum">31</div><div class="OldTag">Dan Spivack</div>
+        <div class="OldTagNum">123</div><div class="OldTag">Daniel Alverio</div>
+        <div class="OldTagNum">40</div><div class="OldTag">Daniel Fitzgerald </div>
+        <div class="OldTagNum">108</div><div class="OldTag">Daniel Meers</div>
+        <div class="OldTagNum">100</div><div class="OldTag">Danny O'Brien</div>
+        <div class="OldTagNum">169</div><div class="OldTag">Dave Drescher</div>
+        <div class="OldTagNum">137</div><div class="OldTag">David Judge</div>
+        <div class="OldTagNum">100</div><div class="OldTag">David Woods</div>
+        <div class="OldTagNum">45</div><div class="OldTag">Derek Giannetti</div>
+        <div class="OldTagNum">141</div><div class="OldTag">Derek Scull</div>
+        <div class="OldTagNum">142</div><div class="OldTag">DeShawn Smith</div>
+        <div class="OldTagNum">100</div><div class="OldTag">Devin Hogan</div>
+        <div class="OldTagNum">17</div><div class="OldTag">Dhan Parker</div>
+        <div class="OldTagNum">139</div><div class="OldTag">DJ Haley</div>
+        <div class="OldTagNum">152</div><div class="OldTag">Doug Blystone </div>
+        <div class="OldTagNum">150</div><div class="OldTag">Ed Dobeck</div>
+        <div class="OldTagNum">53</div><div class="OldTag">Elya Beer</div>
+        <div class="OldTagNum">117</div><div class="OldTag">Eric Carr</div>
+        <div class="OldTagNum">9</div><div class="OldTag">Eric Heubusch</div>
+        <div class="OldTagNum">130</div><div class="OldTag">Eric Moll</div>
+        <div class="OldTagNum">154</div><div class="OldTag">Erik Brenner</div>
+        <div class="OldTagNum">122</div><div class="OldTag">Eriq Saldutti</div>
+        <div class="OldTagNum">100</div><div class="OldTag">Evan Koch</div>
+        <div class="OldTagNum">100</div><div class="OldTag">Ferd Mendoza</div>
+        <div class="OldTagNum">100</div><div class="OldTag">George Brooks</div>
+        <div class="OldTagNum">100</div><div class="OldTag">Graham Eldred</div>
+        <div class="OldTagNum">158</div><div class="OldTag">Greg Schaffer</div>
+        <div class="OldTagNum">50</div><div class="OldTag">Griffin Burke</div>
+        <div class="OldTagNum">83</div><div class="OldTag">Hannah Pilling</div>
+        <div class="OldTagNum">153</div><div class="OldTag">Harley Givler</div>
+        <div class="OldTagNum">100</div><div class="OldTag">Ian Price</div>
+        <div class="OldTagNum">100</div><div class="OldTag">Ian Walsh</div>
+        <div class="OldTagNum">161</div><div class="OldTag">Imraan Ismil</div>
+        <div class="OldTagNum">136</div><div class="OldTag">Isabel Bennett </div>
+        <div class="OldTagNum">1</div><div class="OldTag">Jacob Arnold</div>
+        <div class="OldTagNum">100</div><div class="OldTag">Jacob Markovitz</div>
+        <div class="OldTagNum">55</div><div class="OldTag">Jarrett Brown</div>
+        <div class="OldTagNum">100</div><div class="OldTag">Jason Coefer</div>
+        <div class="OldTagNum">149</div><div class="OldTag">Jason Conti</div>
+        <div class="OldTagNum">133</div><div class="OldTag">Jason McDermott</div>
+        <div class="OldTagNum">54</div><div class="OldTag">Jason pereira</div>
+        <div class="OldTagNum">151</div><div class="OldTag">Jason Powell</div>
+        <div class="OldTagNum">100</div><div class="OldTag">JD Scaffidi</div>
+        <div class="OldTagNum">100</div><div class="OldTag">Jesse Koch</div>
+        <div class="OldTagNum">100</div><div class="OldTag">Jesse White</div>
+        <div class="OldTagNum">100</div><div class="OldTag">Jim Leslie</div>
+        <div class="OldTagNum">23</div><div class="OldTag">Jimmy Wyatt</div>
+        <div class="OldTagNum">99</div><div class="OldTag">Joe Cannon</div>
+        <div class="OldTagNum">156</div><div class="OldTag">Joe Haley</div>
+        <div class="OldTagNum">172</div><div class="OldTag">Joe Johnson </div>
+        <div class="OldTagNum">79</div><div class="OldTag">Joe Johnston</div>
+        <div class="OldTagNum">32</div><div class="OldTag">Joel Pielacha</div>
+        <div class="OldTagNum">100</div><div class="OldTag">Joel Prushan</div>
+        <div class="OldTagNum">59</div><div class="OldTag">Joel Smith</div>
+        <div class="OldTagNum">100</div><div class="OldTag">Joey Bruno</div>
+        <div class="OldTagNum">100</div><div class="OldTag">John Filoretto</div>
+        <div class="OldTagNum">170</div><div class="OldTag">John Haley</div>
+        <div class="OldTagNum">100</div><div class="OldTag">John Tye</div>
+        <div class="OldTagNum">71</div><div class="OldTag">John Walker</div>
+        <div class="OldTagNum">100</div><div class="OldTag">Jon Olshefski</div>
+        <div class="OldTagNum">100</div><div class="OldTag">Jonathan Park</div>
+        <div class="OldTagNum">58</div><div class="OldTag">Jordan Sangalang</div>
+        <div class="OldTagNum">39</div><div class="OldTag">Josh Bower</div>
+        <div class="OldTagNum">157</div><div class="OldTag">Josh Dwyer</div>
+        <div class="OldTagNum">138</div><div class="OldTag">Josh Goren</div>
+        <div class="OldTagNum">13</div><div class="OldTag">Josh Hughes</div>
+        <div class="OldTagNum">128</div><div class="OldTag">Joshua Rigberg</div>
+        <div class="OldTagNum">26</div><div class="OldTag">JP Lord</div>
+        <div class="OldTagNum">143</div><div class="OldTag">Julia Gibbard</div>
+        <div class="OldTagNum">68</div><div class="OldTag">Justin Bozek</div>
+        <div class="OldTagNum">81</div><div class="OldTag">Justin Case</div>
+        <div class="OldTagNum">57</div><div class="OldTag">Keith Clinton</div>
+        <div class="OldTagNum">87</div><div class="OldTag">Ken Goydan</div>
+        <div class="OldTagNum">65</div><div class="OldTag">Ken Musser</div>
+        <div class="OldTagNum">134</div><div class="OldTag">Ken Rackow</div>
+        <div class="OldTagNum">159</div><div class="OldTag">Ken Wall</div>
+        <div class="OldTagNum">100</div><div class="OldTag">Kevin Begin</div>
+        <div class="OldTagNum">106</div><div class="OldTag">Kevin Haley</div>
+        <div class="OldTagNum">100</div><div class="OldTag">Kris B</div>
+        <div class="OldTagNum">100</div><div class="OldTag">Kris Verderber</div>
+        <div class="OldTagNum">100</div><div class="OldTag">Kurt Wende</div>
+        <div class="OldTagNum">100</div><div class="OldTag">Kyle Purvis</div>
+        <div class="OldTagNum">155</div><div class="OldTag">La Boscia</div>
+        <div class="OldTagNum">70</div><div class="OldTag">Lee Gould</div>
+        <div class="OldTagNum">167</div><div class="OldTag">Liam Tomlinson</div>
+        <div class="OldTagNum">37</div><div class="OldTag">Mark Griffenberg</div>
+        <div class="OldTagNum">100</div><div class="OldTag">Mark Stieffenhoffer</div>
+        <div class="OldTagNum">132</div><div class="OldTag">Martin Delaney</div>
+        <div class="OldTagNum">62</div><div class="OldTag">Martin Delaney (lost)</div>
+        <div class="OldTagNum">100</div><div class="OldTag">Martin Tuttle</div>
+        <div class="OldTagNum">107</div><div class="OldTag">Mathew Adams</div>
+        <div class="OldTagNum">118</div><div class="OldTag">Matt Hartel</div>
+        <div class="OldTagNum">29</div><div class="OldTag">Matt Lawson </div>
+        <div class="OldTagNum">100</div><div class="OldTag">Matt Nufable</div>
+        <div class="OldTagNum">47</div><div class="OldTag">Matthew Jurkiewicz</div>
+        <div class="OldTagNum">93</div><div class="OldTag">Matthew Schneider</div>
+        <div class="OldTagNum">101</div><div class="OldTag">Maxx Vitiello</div>
+        <div class="OldTagNum">74</div><div class="OldTag">Michael Chwal</div>
+        <div class="OldTagNum">100</div><div class="OldTag">Michael Gallagher</div>
+        <div class="OldTagNum">100</div><div class="OldTag">Mike Dalton</div>
+        <div class="OldTagNum">80</div><div class="OldTag">Mike Haley</div>
+        <div class="OldTagNum">100</div><div class="OldTag">Mike Harbold</div>
+        <div class="OldTagNum">100</div><div class="OldTag">Mike Moore</div>
+        <div class="OldTagNum">100</div><div class="OldTag">Mike Murray</div>
+        <div class="OldTagNum">42</div><div class="OldTag">Mike Schmidt-Lange</div>
+        <div class="OldTagNum">63</div><div class="OldTag">Mike Tomlinson</div>
+        <div class="OldTagNum">100</div><div class="OldTag">Mike Walsh</div>
+        <div class="OldTagNum">168</div><div class="OldTag">Molly Messana</div>
+        <div class="OldTagNum">8</div><div class="OldTag">Nate Krahn</div>
+        <div class="OldTagNum">100</div><div class="OldTag">Nate Runkel</div>
+        <div class="OldTagNum">49</div><div class="OldTag">Nathan Haskell</div>
+        <div class="OldTagNum">69</div><div class="OldTag">Nathan Koehler</div>
+        <div class="OldTagNum">175</div><div class="OldTag">Neal Stone</div>
+        <div class="OldTagNum">Neil</div><div class="OldTag">Neal Shupack</div>
+        <div class="OldTagNum">100</div><div class="OldTag">Nicholas Merrill</div>
+        <div class="OldTagNum">100</div><div class="OldTag">Nick Huff</div>
+        <div class="OldTagNum">92</div><div class="OldTag">Nigel Haley</div>
+        <div class="OldTagNum">11</div><div class="OldTag">Pat Battaglia</div>
+        <div class="OldTagNum">72</div><div class="OldTag">Patrick Completa</div>
+        <div class="OldTagNum">165</div><div class="OldTag">Patrick Haley</div>
+        <div class="OldTagNum">160</div><div class="OldTag">Patrick Sublette</div>
+        <div class="OldTagNum">100</div><div class="OldTag">Paul Tu</div>
+        <div class="OldTagNum">90</div><div class="OldTag">Pete Schemm</div>
+        <div class="OldTagNum">102</div><div class="OldTag">Pete Vercullo</div>
+        <div class="OldTagNum">112</div><div class="OldTag">Peter Fernandez</div>
+        <div class="OldTagNum">100</div><div class="OldTag">Phil Carpino</div>
+        <div class="OldTagNum">10</div><div class="OldTag">Phil Schuit</div>
+        <div class="OldTagNum">100</div><div class="OldTag">Phil Schwarz</div>
+        <div class="OldTagNum">174</div><div class="OldTag">Phil Szuch</div>
+        <div class="OldTagNum">41</div><div class="OldTag">Ray Branson</div>
+        <div class="OldTagNum">100</div><div class="OldTag">Rich Neher</div>
+        <div class="OldTagNum">109</div><div class="OldTag">Rob Ranalli</div>
+        <div class="OldTagNum">30</div><div class="OldTag">Rob Staas</div>
+        <div class="OldTagNum">56</div><div class="OldTag">Ron Jon</div>
+        <div class="OldTagNum">171</div><div class="OldTag">Rory Sullivan</div>
+        <div class="OldTagNum">116</div><div class="OldTag">Ryan Amaya</div>
+        <div class="OldTagNum">104</div><div class="OldTag">Ryan Beerley</div>
+        <div class="OldTagNum">66</div><div class="OldTag">Ryan Bronowicz</div>
+        <div class="OldTagNum">147</div><div class="OldTag">Ryan Chudd</div>
+        <div class="OldTagNum">100</div><div class="OldTag">Ryan Dauksis</div>
+        <div class="OldTagNum">100</div><div class="OldTag">Ryan Hooker</div>
+        <div class="OldTagNum">19</div><div class="OldTag">Ryan Jendras</div>
+        <div class="OldTagNum">100</div><div class="OldTag">Ryan Manley</div>
+        <div class="OldTagNum">103</div><div class="OldTag">Ryan Sands</div>
+        <div class="OldTagNum">86</div><div class="OldTag">Scott Lee</div>
+        <div class="OldTagNum">100</div><div class="OldTag">Scott Raymond</div>
+        <div class="OldTagNum">13</div><div class="OldTag">Sean Beerley</div>
+        <div class="OldTagNum">64</div><div class="OldTag">Sean Bennett</div>
+        <div class="OldTagNum">110</div><div class="OldTag">Sean Donnelly </div>
+        <div class="OldTagNum">95</div><div class="OldTag">Sean O'Neil</div>
+        <div class="OldTagNum">119</div><div class="OldTag">Sean Smith</div>
+        <div class="OldTagNum">60</div><div class="OldTag">Sean Stevens</div>
+        <div class="OldTagNum">144</div><div class="OldTag">Shane Haley</div>
+        <div class="OldTagNum">28</div><div class="OldTag">Shaun Dupell</div>
+        <div class="OldTagNum">100</div><div class="OldTag">Shawn Overture</div>
+        <div class="OldTagNum">3</div><div class="OldTag">Sheldon Wakefield</div>
+        <div class="OldTagNum">94</div><div class="OldTag">Simon Junge</div>
+        <div class="OldTagNum">105</div><div class="OldTag">Stephen Deering</div>
+        <div class="OldTagNum">16</div><div class="OldTag">Steve Forostiak</div>
+        <div class="OldTagNum">44</div><div class="OldTag">Tim Dougherty</div>
+        <div class="OldTagNum">124</div><div class="OldTag">Todd Richardson</div>
+        <div class="OldTagNum">78</div><div class="OldTag">Tom Anderson</div>
+        <div class="OldTagNum">100</div><div class="OldTag">Tom McDonnell</div>
+        <div class="OldTagNum">129</div><div class="OldTag">Tom Weir</div>
+        <div class="OldTagNum">24</div><div class="OldTag">Tony Rodgers</div>
+        <div class="OldTagNum">176</div><div class="OldTag">Tor Heilman</div>
+        <div class="OldTagNum">38</div><div class="OldTag">Travis Conrad</div>
+        <div class="OldTagNum">76</div><div class="OldTag">Travis Welsh</div>
+        <div class="OldTagNum">127</div><div class="OldTag">Trevor Heins</div>
+        <div class="OldTagNum">21</div><div class="OldTag">Trevor Holt</div>
+        <div class="OldTagNum">100</div><div class="OldTag">Tyler Emel</div>
+        <div class="OldTagNum">114</div><div class="OldTag">Tyler Yocolano</div>
+        <div class="OldTagNum">35</div><div class="OldTag">Viv Arora</div>
+        <div class="OldTagNum">121</div><div class="OldTag">Will Betts Cope</div>
+        <div class="OldTagNum">33</div><div class="OldTag">Will Fraser</div>
+        <div class="OldTagNum">126</div><div class="OldTag">Zach Conti</div>
+        <div class="OldTagNum">6</div><div class="OldTag">Zach Sharp </div>
+        <div class="OldTagNum">15</div><div class="OldTag">Zack Hutchison</div>
+        <div class="OldTagNum">75</div><div class="OldTag">Zack Locke</div>
+    </div>
   </div>
   <div id="controlsSection">
     <div id="controlsContainer">
